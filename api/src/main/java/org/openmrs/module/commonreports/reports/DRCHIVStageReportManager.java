@@ -82,6 +82,11 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		return new Parameter("endDate", "End Date", Date.class);
 	}
 	
+	private Parameter getDefaultDateParameter() {
+		return new Parameter("defaultDateTime", "Default Obs Date", Date.class, null,
+		        DateUtil.parseDate("1970-01-01", "yyyy-MM-dd"));
+	}
+	
 	public String getHivStage3And4Name() {
 		return MessageUtil.translate("commonreports.report.drc.hivStage.reportName");
 	}
@@ -117,6 +122,8 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		List<Parameter> params = new ArrayList<Parameter>();
 		params.add(getStartDateParameter());
 		params.add(getEndDateParameter());
+		params.add(getDefaultDateParameter());
+		
 		return params;
 	}
 	
@@ -134,7 +141,9 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		rd.addDataSetDefinition(getHivStage3And4Name(), Mapped.mapStraightThrough(hivStage3And4));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
-		parameterMappings.put("onOrAfter", "${startDate}");
+		//parameterMappings.put("onOrAfter", "${startDate}");
+		parameterMappings.put("onOrAfter", "${defaultDateTime}");
+		
 		parameterMappings.put("onOrBefore", "${endDate}");
 		parameterMappings.put("startedOnOrAfter", "${startDate}");
 		parameterMappings.put("startedOnOrBefore", "${endDate}");
@@ -160,7 +169,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		hivStage3And4Obs.setValueList(hivStages);
 		hivStage3And4Obs.setTimeModifier(TimeModifier.LAST);
 		
-		// HIV stage 3 and 4
+		// Reffered out
 		List<Concept> referallOption = new ArrayList<Concept>();
 		referallOption.add(cs.getConceptByUuid("cf82933b-3f3f-45e7-a5ab-5d31aaee3da3")); //Yes
 		CodedObsCohortDefinition referredObs = new CodedObsCohortDefinition();
