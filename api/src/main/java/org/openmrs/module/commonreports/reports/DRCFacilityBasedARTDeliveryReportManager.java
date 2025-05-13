@@ -77,7 +77,7 @@ public class DRCFacilityBasedARTDeliveryReportManager extends ActivatedReportMan
 	
 	private Parameter getReportingDateParameter() {
 		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		return new Parameter("onOrBefore", "Reporting End Date", Date.class, null, DateUtil.parseDate(today, "yyyy-MM-dd"));
+		return new Parameter("onOrBefore", MessageUtil.translate("commonreports.report.util.reportingEndDate"), Date.class, null, DateUtil.parseDate(today, "yyyy-MM-dd"));
 	}
 	
 	public static String col1 = "";
