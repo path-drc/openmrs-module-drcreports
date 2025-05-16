@@ -43,7 +43,7 @@ import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
 
 @Component
-public class DRCARTPDVReportManager extends ActivatedReportManager {
+public class DRCARTDeathReportManager extends ActivatedReportManager {
 	
 	@Autowired
 	private InitializerService inizService;
@@ -62,23 +62,25 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 	
 	@Override
 	public String getUuid() {
-		return "7e2e8afb-46cf-48a7-8195-d6ce877b30b8";
+		return "537763bb-a4d2-4e77-81d9-cae2588227ea";
 	}
 	
 	@Override
 	public String getName() {
-		return MessageUtil.translate("commonreports.report.drc.artPDV.reportName");
+		return MessageUtil.translate("commonreports.report.drc.artDeath.reportName");
 	}
 	
 	@Override
 	public String getDescription() {
-		return MessageUtil.translate("commonreports.report.drc.artPDV.reportDescription");
+		return MessageUtil.translate("commonreports.report.drc.artDeath.reportDescription");
 	}
 	
-	private Parameter getReportingDateParameter() {
-		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		return new Parameter("onOrBefore", MessageUtil.translate("commonreports.report.util.reportingEndDate"), Date.class,
-		        null, DateUtil.parseDate(today, "yyyy-MM-dd"));
+	private Parameter getStartDateParameter() {
+		return new Parameter("startDate", MessageUtil.translate("commonreports.report.util.reportingStartDate"), Date.class);
+	}
+	
+	private Parameter getEndDateParameter() {
+		return new Parameter("endDate", MessageUtil.translate("commonreports.report.util.reportingEndDate"), Date.class);
 	}
 	
 	public static String col1 = "";
@@ -106,8 +108,8 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> params = new ArrayList<Parameter>();
-		params.add(getReportingDateParameter());
-		
+		params.add(getStartDateParameter());
+		params.add(getEndDateParameter());
 		return params;
 	}
 	
@@ -119,50 +121,43 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 		
-		// artPDV Grouping
-		CohortCrossTabDataSetDefinition artPDV = new CohortCrossTabDataSetDefinition();
-		artPDV.addParameters(getParameters());
-		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(artPDV));
+		// artDeath Grouping
+		CohortCrossTabDataSetDefinition artDeath = new CohortCrossTabDataSetDefinition();
+		artDeath.addParameters(getParameters());
+		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(artDeath));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
-		parameterMappings.put("onOrBefore", "${onOrBefore}");
-		
+		parameterMappings.put("onOrAfter", "${startDate}");
+		parameterMappings.put("onOrBefore", "${endDate}");
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
-		// ART plan -> Started drugs
-		// Visit in past 90 days
-		/////// ART refill model -> Normal with visit
-		// Not referred
+		// Death Date in range
+		// ART Start/Initiation before death date
 		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND c_answer.uuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0) "
-		        + "AND EXISTS (SELECT 1 FROM visit v WHERE v.patient_id = p.patient_id AND v.date_started BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore AND v.voided = 0) "
-				//+ "AND EXISTS (SELECT 1 FROM obs o2 JOIN concept cq2 ON o2.concept_id = cq2.concept_id JOIN concept ca2 ON o2.value_coded = ca2.concept_id WHERE o2.person_id = p.patient_id AND cq2.uuid = '166448AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND ca2.uuid = '166447AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o2.voided = 0 AND o2.obs_datetime = (SELECT MAX(o3.obs_datetime) FROM obs o3 WHERE o3.person_id = p.patient_id AND o3.concept_id = cq2.concept_id AND o3.voided = 0)) "
-		        + "AND NOT EXISTS (SELECT 1 FROM obs o4 JOIN concept cq4 ON o4.concept_id = cq4.concept_id JOIN concept ca4 ON o4.value_coded = ca4.concept_id WHERE o4.person_id = p.patient_id AND cq4.uuid = '1648AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND ca4.uuid = 'cf82933b-3f3f-45e7-a5ab-5d31aaee3da3' AND o4.voided = 0 AND o4.obs_datetime = (SELECT MAX(o5.obs_datetime) FROM obs o5 WHERE o5.person_id = p.patient_id AND o5.concept_id = cq4.concept_id AND o5.voided = 0));";
+		        + "AND EXISTS (SELECT 1 FROM obs o_date JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_date.person_id = p.patient_id AND c_date.uuid = '1543AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_date.voided = 0 AND o_date.value_datetime BETWEEN :onOrAfter AND :onOrBefore AND o_date.obs_datetime = (SELECT MAX(od_inner.obs_datetime) FROM obs od_inner WHERE od_inner.person_id = p.patient_id AND od_inner.concept_id = c_date.concept_id AND od_inner.voided = 0)) "
+		        + "AND EXISTS (SELECT 1 FROM obs o_earlier JOIN concept c_earlier ON o_earlier.concept_id = c_earlier.concept_id WHERE o_earlier.person_id = p.patient_id AND c_earlier.uuid = '159599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_earlier.voided = 0 AND o_earlier.value_datetime < (SELECT latest_date_obs.value_datetime FROM obs latest_date_obs JOIN concept latest_date_concept ON latest_date_obs.concept_id = latest_date_concept.concept_id WHERE latest_date_obs.person_id = p.patient_id AND latest_date_concept.uuid = '1543AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND latest_date_obs.voided = 0 AND latest_date_obs.obs_datetime = (SELECT MAX(ld_inner.obs_datetime) FROM obs ld_inner WHERE ld_inner.person_id = p.patient_id AND ld_inner.concept_id = latest_date_concept.concept_id AND ld_inner.voided = 0)));";
 		sqd.setQuery(sql);
+		sqd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		sqd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
-		// Alive patients
-		BirthAndDeathCohortDefinition livePatients = new BirthAndDeathCohortDefinition();
-		livePatients.setDied(false);
-		
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-		ccd.initializeFromElements(sqd, livePatients);
-		artPDV.addRow(getName(), ccd, parameterMappings);
+		ccd.initializeFromElements(sqd);
+		artDeath.addRow(getName(), ccd, parameterMappings);
 		
 		setColumnNames();
 		
 		GenderCohortDefinition males = new GenderCohortDefinition();
 		males.setMaleIncluded(true);
-		artPDV.addColumn(col1, createCohortComposition(males), null);
+		artDeath.addColumn(col1, createCohortComposition(males), null);
 		
 		GenderCohortDefinition females = new GenderCohortDefinition();
 		females.setFemaleIncluded(true);
-		artPDV.addColumn(col2, createCohortComposition(females), null);
+		artDeath.addColumn(col2, createCohortComposition(females), null);
 		
 		GenderCohortDefinition allGenders = new GenderCohortDefinition();
 		allGenders.setFemaleIncluded(true);
 		allGenders.setMaleIncluded(true);
-		artPDV.addColumn(col3, createCohortComposition(allGenders), null);
+		artDeath.addColumn(col3, createCohortComposition(allGenders), null);
 		
 		// < 1 year
 		AgeCohortDefinition under1y = new AgeCohortDefinition();
@@ -171,7 +166,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col4, createCohortComposition(under1y), null);
+		artDeath.addColumn(col4, createCohortComposition(under1y), null);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -180,7 +175,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col5, createCohortComposition(_1To4y), null);
+		artDeath.addColumn(col5, createCohortComposition(_1To4y), null);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -189,7 +184,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col6, createCohortComposition(_5To9y), null);
+		artDeath.addColumn(col6, createCohortComposition(_5To9y), null);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -198,7 +193,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col7, createCohortComposition(_10To14y), null);
+		artDeath.addColumn(col7, createCohortComposition(_10To14y), null);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -207,7 +202,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col8, createCohortComposition(_15To19y), null);
+		artDeath.addColumn(col8, createCohortComposition(_15To19y), null);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -216,7 +211,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col9, createCohortComposition(_20To24y), null);
+		artDeath.addColumn(col9, createCohortComposition(_20To24y), null);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -225,7 +220,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col10, createCohortComposition(_25To49y), null);
+		artDeath.addColumn(col10, createCohortComposition(_25To49y), null);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -234,7 +229,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col11, createCohortComposition(_50andAbove), null);
+		artDeath.addColumn(col11, createCohortComposition(_50andAbove), null);
 		
 		return rd;
 	}
@@ -264,6 +259,6 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		return Arrays
-		        .asList(ReportManagerUtil.createCsvReportDesign("1e7aefa6-af43-4f8f-996f-e727dba483ce", reportDefinition));
+		        .asList(ReportManagerUtil.createCsvReportDesign("b26dc58c-9cdc-405a-8ba6-1e6462e4d66f", reportDefinition));
 	}
 }
