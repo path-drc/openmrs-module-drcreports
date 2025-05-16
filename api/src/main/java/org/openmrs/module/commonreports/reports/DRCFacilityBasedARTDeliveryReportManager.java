@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.text.SimpleDateFormat;
 
 import org.openmrs.Concept;
 import org.openmrs.VisitType;
@@ -42,7 +43,7 @@ import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
 
 @Component
-public class DRCHIVStageReportManager extends ActivatedReportManager {
+public class DRCFacilityBasedARTDeliveryReportManager extends ActivatedReportManager {
 	
 	@Autowired
 	private InitializerService inizService;
@@ -61,34 +62,22 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 	
 	@Override
 	public String getUuid() {
-		return "27b977d2-02bf-4ef9-b512-9b9c495962b8";
+		return "f6b09a7e-f330-431d-b7b8-891dd35db0e1";
 	}
 	
 	@Override
 	public String getName() {
-		return MessageUtil.translate("commonreports.report.drc.hivStage.reportName");
+		return MessageUtil.translate("commonreports.report.drc.facilityBasedARTDelivery.reportName");
 	}
 	
 	@Override
 	public String getDescription() {
-		return MessageUtil.translate("commonreports.report.drc.hivStage.reportDescription");
+		return MessageUtil.translate("commonreports.report.drc.facilityBasedARTDelivery.reportDescription");
 	}
 	
-	private Parameter getStartDateParameter() {
-		return new Parameter("startDate", "Start Date", Date.class);
-	}
-	
-	private Parameter getEndDateParameter() {
-		return new Parameter("endDate", "End Date", Date.class);
-	}
-	
-	private Parameter getDefaultDateParameter() {
-		return new Parameter("defaultDateTime", "Default Obs Date", Date.class, null,
-		        DateUtil.parseDate("1970-01-01", "yyyy-MM-dd"));
-	}
-	
-	public String getHivStage3And4Name() {
-		return MessageUtil.translate("commonreports.report.drc.hivStage.reportName");
+	private Parameter getReportingDateParameter() {
+		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+		return new Parameter("onOrBefore", MessageUtil.translate("commonreports.report.util.reportingEndDate"), Date.class, null, DateUtil.parseDate(today, "yyyy-MM-dd"));
 	}
 	
 	public static String col1 = "";
@@ -113,16 +102,10 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 	
 	public static String col11 = "";
 	
-	@Autowired
-	@Qualifier("visitService")
-	private VisitService vs;
-	
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> params = new ArrayList<Parameter>();
-		params.add(getStartDateParameter());
-		params.add(getEndDateParameter());
-		params.add(getDefaultDateParameter());
+		params.add(getReportingDateParameter());
 		
 		return params;
 	}
@@ -135,73 +118,50 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 		
-		// hivStage3And4 Grouping
-		CohortCrossTabDataSetDefinition hivStage3And4 = new CohortCrossTabDataSetDefinition();
-		hivStage3And4.addParameters(getParameters());
-		rd.addDataSetDefinition(getHivStage3And4Name(), Mapped.mapStraightThrough(hivStage3And4));
+		// facilityBasedARTDelivery Grouping
+		CohortCrossTabDataSetDefinition facilityBasedARTDelivery = new CohortCrossTabDataSetDefinition();
+		facilityBasedARTDelivery.addParameters(getParameters());
+		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(facilityBasedARTDelivery));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
-		//parameterMappings.put("onOrAfter", "${startDate}");
-		parameterMappings.put("onOrAfter", "${defaultDateTime}");
+		parameterMappings.put("onOrBefore", "${onOrBefore}");
 		
-		parameterMappings.put("onOrBefore", "${endDate}");
-		parameterMappings.put("startedOnOrAfter", "${startDate}");
-		parameterMappings.put("startedOnOrBefore", "${endDate}");
+		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
-		VisitCohortDefinition visits = new VisitCohortDefinition();
-		visits.setVisitTypeList(vs.getAllVisitTypes(false));
-		visits.addParameter(new Parameter("startedOnOrAfter", "On Or After", Date.class));
-		visits.addParameter(new Parameter("startedOnOrBefore", "On Or Before", Date.class));
-		
-		ConceptService cs = Context.getConceptService();
-		
-		// HIV stage 3 and 4
-		List<Concept> hivStages = new ArrayList<Concept>();
-		hivStages.add(cs.getConceptByUuid("1222AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
-		hivStages.add(cs.getConceptByUuid("1223AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
-		hivStages.add(cs.getConceptByUuid("1206AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
-		hivStages.add(cs.getConceptByUuid("1207AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
-		CodedObsCohortDefinition hivStage3And4Obs = new CodedObsCohortDefinition();
-		hivStage3And4Obs.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
-		hivStage3And4Obs.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
-		hivStage3And4Obs.setOperator(SetComparator.IN);
-		hivStage3And4Obs.setQuestion(cs.getConceptByUuid("5356AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
-		hivStage3And4Obs.setValueList(hivStages);
-		hivStage3And4Obs.setTimeModifier(TimeModifier.LAST);
-		
-		// Not Reffered out
-		List<Concept> referallOption = new ArrayList<Concept>();
-		referallOption.add(cs.getConceptByUuid("cf82933b-3f3f-45e7-a5ab-5d31aaee3da3")); //Yes
-		CodedObsCohortDefinition referredObs = new CodedObsCohortDefinition();
-		referredObs.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
-		referredObs.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
-		referredObs.setOperator(SetComparator.NOT_IN);
-		referredObs.setQuestion(cs.getConceptByUuid("1648AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); //Referred
-		referredObs.setValueList(referallOption);
-		referredObs.setTimeModifier(TimeModifier.LAST);
+		// ART plan -> Started drugs
+		// Visit in past 90 days
+		// ART refill model -> Normal with visit
+		// Not transferred
+		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND c_answer.uuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0) "
+		        + "AND EXISTS (SELECT 1 FROM visit v WHERE v.patient_id = p.patient_id AND v.date_started BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore AND v.voided = 0) "
+		        + "AND EXISTS (SELECT 1 FROM obs o2 JOIN concept cq2 ON o2.concept_id = cq2.concept_id JOIN concept ca2 ON o2.value_coded = ca2.concept_id WHERE o2.person_id = p.patient_id AND cq2.uuid = '166448AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND ca2.uuid = '166447AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o2.voided = 0 AND o2.obs_datetime = (SELECT MAX(o3.obs_datetime) FROM obs o3 WHERE o3.person_id = p.patient_id AND o3.concept_id = cq2.concept_id AND o3.voided = 0)) "
+		        + "AND NOT EXISTS (SELECT 1 FROM obs o4 JOIN concept cq4 ON o4.concept_id = cq4.concept_id JOIN concept ca4 ON o4.value_coded = ca4.concept_id WHERE o4.person_id = p.patient_id AND cq4.uuid = '797e0073-1f3f-46b1-8b1a-8cdad134d2b3' AND ca4.uuid = '1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o4.voided = 0 AND o4.obs_datetime = (SELECT MAX(o5.obs_datetime) FROM obs o5 WHERE o5.person_id = p.patient_id AND o5.concept_id = cq4.concept_id AND o5.voided = 0));";
+		sqd.setQuery(sql);
+		sqd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
 		// Alive patients
 		BirthAndDeathCohortDefinition livePatients = new BirthAndDeathCohortDefinition();
 		livePatients.setDied(false);
 		
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-		ccd.initializeFromElements(visits, hivStage3And4Obs, referredObs, livePatients);
-		hivStage3And4.addRow(MessageUtil.translate("commonreports.report.drc.hivStage.reportName"), ccd, parameterMappings);
+		ccd.initializeFromElements(sqd, livePatients);
+		facilityBasedARTDelivery.addRow(getName(), ccd, parameterMappings);
 		
 		setColumnNames();
 		
 		GenderCohortDefinition males = new GenderCohortDefinition();
 		males.setMaleIncluded(true);
-		hivStage3And4.addColumn(col1, createCohortComposition(males), null);
+		facilityBasedARTDelivery.addColumn(col1, createCohortComposition(males), null);
 		
 		GenderCohortDefinition females = new GenderCohortDefinition();
 		females.setFemaleIncluded(true);
-		hivStage3And4.addColumn(col2, createCohortComposition(females), null);
+		facilityBasedARTDelivery.addColumn(col2, createCohortComposition(females), null);
 		
 		GenderCohortDefinition allGenders = new GenderCohortDefinition();
 		allGenders.setFemaleIncluded(true);
 		allGenders.setMaleIncluded(true);
-		hivStage3And4.addColumn(col3, createCohortComposition(allGenders), null);
+		facilityBasedARTDelivery.addColumn(col3, createCohortComposition(allGenders), null);
 		
 		// < 1 year
 		AgeCohortDefinition under1y = new AgeCohortDefinition();
@@ -210,7 +170,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivStage3And4.addColumn(col4, createCohortComposition(under1y), null);
+		facilityBasedARTDelivery.addColumn(col4, createCohortComposition(under1y), null);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -219,7 +179,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivStage3And4.addColumn(col5, createCohortComposition(_1To4y), null);
+		facilityBasedARTDelivery.addColumn(col5, createCohortComposition(_1To4y), null);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -228,7 +188,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivStage3And4.addColumn(col6, createCohortComposition(_5To9y), null);
+		facilityBasedARTDelivery.addColumn(col6, createCohortComposition(_5To9y), null);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -237,7 +197,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivStage3And4.addColumn(col7, createCohortComposition(_10To14y), null);
+		facilityBasedARTDelivery.addColumn(col7, createCohortComposition(_10To14y), null);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -246,7 +206,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivStage3And4.addColumn(col8, createCohortComposition(_15To19y), null);
+		facilityBasedARTDelivery.addColumn(col8, createCohortComposition(_15To19y), null);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -255,7 +215,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivStage3And4.addColumn(col9, createCohortComposition(_20To24y), null);
+		facilityBasedARTDelivery.addColumn(col9, createCohortComposition(_20To24y), null);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -264,7 +224,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivStage3And4.addColumn(col10, createCohortComposition(_25To49y), null);
+		facilityBasedARTDelivery.addColumn(col10, createCohortComposition(_25To49y), null);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -273,7 +233,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivStage3And4.addColumn(col11, createCohortComposition(_50andAbove), null);
+		facilityBasedARTDelivery.addColumn(col11, createCohortComposition(_50andAbove), null);
 		
 		return rd;
 	}
@@ -303,6 +263,6 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		return Arrays
-		        .asList(ReportManagerUtil.createCsvReportDesign("beac741c-813c-43a0-80e1-27c9de5bcf01", reportDefinition));
+		        .asList(ReportManagerUtil.createCsvReportDesign("637aa0c0-c6ea-435b-a43d-21f01fd8af42", reportDefinition));
 	}
 }
