@@ -129,9 +129,9 @@ public class DRCFacilityDispensationReportManager extends ActivatedReportManager
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
 		parameterMappings.put("onOrAfter", "${startDate}");
 		parameterMappings.put("onOrBefore", "${endDate}");
-		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
 		// ART refill for <90 days(< 3 months) with reporting in range
+		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
 		        + "AND EXISTS (SELECT 1 FROM obs o_num JOIN concept c_num ON o_num.concept_id = c_num.concept_id WHERE o_num.person_id = p.patient_id AND c_num.uuid = '3a0709e9-d7a8-44b9-9512-111db5ce3989' AND o_num.voided = 0 AND o_num.value_numeric < 90 AND o_num.obs_datetime BETWEEN :onOrAfter AND :onOrBefore); ";
 		sqd.setQuery(sql);
@@ -141,8 +141,8 @@ public class DRCFacilityDispensationReportManager extends ActivatedReportManager
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
 		ccd.initializeFromElements(sqd);
 		
-		SqlCohortDefinition sqd2 = new SqlCohortDefinition();
 		// ART refill for 90-149 days(3-5 months) with reporting in range
+		SqlCohortDefinition sqd2 = new SqlCohortDefinition();
 		String sql2 = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
 		        + "AND EXISTS (SELECT 1 FROM obs o_num JOIN concept c_num ON o_num.concept_id = c_num.concept_id "
 		        + "WHERE o_num.person_id = p.patient_id " + "AND c_num.uuid = '3a0709e9-d7a8-44b9-9512-111db5ce3989' "
@@ -156,9 +156,8 @@ public class DRCFacilityDispensationReportManager extends ActivatedReportManager
 		CompositionCohortDefinition ccd2 = new CompositionCohortDefinition();
 		ccd2.initializeFromElements(sqd2);
 		
+		// ART refill for >=150 days(>5months) with reporting in range
 		SqlCohortDefinition sqd3 = new SqlCohortDefinition();
-		
-		// ART refill for <90 days(>5months) with reporting in range
 		String sql3 = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
 		        + "AND EXISTS (SELECT 1 FROM obs o_num JOIN concept c_num ON o_num.concept_id = c_num.concept_id "
 		        + "WHERE o_num.person_id = p.patient_id " + "AND c_num.uuid = '3a0709e9-d7a8-44b9-9512-111db5ce3989' "
