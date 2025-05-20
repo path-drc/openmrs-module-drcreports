@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 
 @Component
-public class DRCPatientsReportManagers extends ActivatedReportManager {
+public class DRCPatientsReportManager extends ActivatedReportManager {
 	
 	@Autowired
 	private InitializerService inizService;
