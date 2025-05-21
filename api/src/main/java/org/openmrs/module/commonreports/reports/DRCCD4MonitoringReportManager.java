@@ -131,11 +131,14 @@ public class DRCCD4MonitoringReportManager extends ActivatedReportManager {
 		parameterMappings.put("onOrBefore", "${endDate}");
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
-		// CD4 value in range
-		// Enrolled for HIV care
+		// CD4 Result Date in range
+		// CD4 count exists for the obs_date of CD4 Result Date above
+		// Enrolled for HIV care program
 		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o_num JOIN concept c_num ON o_num.concept_id = c_num.concept_id WHERE o_num.person_id = p.patient_id AND c_num.uuid = '5497AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_num.voided = 0 AND o_num.value_numeric IS NOT NULL AND o_num.obs_datetime BETWEEN :onOrAfter AND :onOrBefore) "
-		        + "AND EXISTS (SELECT 1 FROM obs o_coded JOIN concept c_coded ON o_coded.concept_id = c_coded.concept_id WHERE o_coded.person_id = p.patient_id AND c_coded.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND o_coded.voided = 0 AND o_coded.value_coded IS NOT NULL);";
+		        + "AND EXISTS (SELECT 1 FROM obs o_date JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_date.person_id = p.patient_id AND c_date.uuid = '163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_date.voided = 0 AND o_date.value_datetime IS NOT NULL AND o_date.value_datetime BETWEEN :onOrAfter AND :onOrBefore) "
+		        + "AND EXISTS (SELECT 1 FROM obs o_num JOIN concept c_num ON o_num.concept_id = c_num.concept_id JOIN obs o_date ON o_date.person_id = o_num.person_id AND DATE(o_num.obs_datetime) = DATE(o_date.obs_datetime) JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_num.person_id = p.patient_id AND c_num.uuid = '5497AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND c_date.uuid = '163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_num.voided = 0 AND o_date.voided = 0 AND o_num.value_numeric IS NOT NULL AND o_date.value_datetime BETWEEN :onOrAfter AND :onOrBefore) "
+		        + "AND EXISTS (SELECT 1 FROM patient_program pp JOIN program prog ON pp.program_id = prog.program_id WHERE pp.patient_id = p.patient_id AND prog.uuid = '64f950e6-1b07-4ac0-8e7e-f3e148f3463f' AND pp.voided = 0 AND pp.date_completed IS NULL);";
+		
 		sqd.setQuery(sql);
 		sqd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		sqd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
@@ -144,12 +147,14 @@ public class DRCCD4MonitoringReportManager extends ActivatedReportManager {
 		ccd.initializeFromElements(sqd);
 		
 		SqlCohortDefinition sqd2 = new SqlCohortDefinition();
-		// CD4 value <200 in range
-		// Enrolled for HIV care
-		String sql2 = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o_num JOIN concept c_num ON o_num.concept_id = c_num.concept_id WHERE o_num.person_id = p.patient_id AND c_num.uuid = '5497AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_num.voided = 0 AND o_num.value_numeric < 200 AND o_num.obs_datetime BETWEEN :onOrAfter AND :onOrBefore) "
-		        + "AND EXISTS (SELECT 1 FROM obs o_coded JOIN concept c_coded ON o_coded.concept_id = c_coded.concept_id WHERE o_coded.person_id = p.patient_id AND c_coded.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND o_coded.voided = 0 AND o_coded.value_coded IS NOT NULL);";
 		
+		// CD4 Result Date in range
+		// CD4 count exists for the obs_date of CD4 Result Date above as <200
+		// Enrolled for HIV care program
+		String sql2 = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
+		        + "AND EXISTS (SELECT 1 FROM obs o_date JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_date.person_id = p.patient_id AND c_date.uuid = '163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_date.voided = 0 AND o_date.value_datetime IS NOT NULL AND o_date.value_datetime BETWEEN :onOrAfter AND :onOrBefore) "
+		        + "AND EXISTS (SELECT 1 FROM obs o_num JOIN concept c_num ON o_num.concept_id = c_num.concept_id JOIN obs o_date ON o_date.person_id = o_num.person_id AND DATE(o_num.obs_datetime) = DATE(o_date.obs_datetime) JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_num.person_id = p.patient_id AND c_num.uuid = '5497AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND c_date.uuid = '163724AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_num.voided = 0 AND o_date.voided = 0 AND o_num.value_numeric IS NOT NULL AND o_num.value_numeric < 200 AND o_date.value_datetime BETWEEN :onOrAfter AND :onOrBefore) "
+		        + "AND EXISTS (SELECT 1 FROM patient_program pp JOIN program prog ON pp.program_id = prog.program_id WHERE pp.patient_id = p.patient_id AND prog.uuid = '64f950e6-1b07-4ac0-8e7e-f3e148f3463f' AND pp.voided = 0 AND pp.date_completed IS NULL);";
 		sqd2.setQuery(sql2);
 		sqd2.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		sqd2.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
