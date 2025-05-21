@@ -140,8 +140,11 @@ public class DRCARTDeathReportManager extends ActivatedReportManager {
 		sqd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		sqd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
+		// Dead patients
+		BirthAndDeathCohortDefinition deadPatients = new BirthAndDeathCohortDefinition();
+		deadPatients.setDied(true);
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-		ccd.initializeFromElements(sqd);
+		ccd.initializeFromElements(sqd, deadPatients);
 		artDeath.addRow(getName(), ccd, parameterMappings);
 		
 		setColumnNames();
