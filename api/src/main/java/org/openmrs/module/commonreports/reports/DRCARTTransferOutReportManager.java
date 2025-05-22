@@ -133,7 +133,7 @@ public class DRCARTTransferOutReportManager extends ActivatedReportManager {
 		
 		// Transfer Out Date in range
 		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o_date JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_date.person_id = p.patient_id AND c_date.uuid = '160649AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_date.voided = 0 AND o_date.value_datetime BETWEEN :onOrAfter AND :onOrBefore AND o_date.obs_datetime = (SELECT MAX(od_inner.obs_datetime) FROM obs od_inner WHERE od_inner.person_id = p.patient_id AND od_inner.concept_id = c_date.concept_id AND od_inner.voided = 0)); ";
+		        + "AND EXISTS (SELECT 1 FROM obs o_date JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_date.person_id = p.patient_id AND c_date.uuid = '160649AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_date.voided = 0 AND o_date.value_datetime BETWEEN :onOrAfter AND :onOrBefore); ";
 		sqd.setQuery(sql);
 		sqd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		sqd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
