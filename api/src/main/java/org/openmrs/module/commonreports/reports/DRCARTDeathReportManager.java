@@ -50,7 +50,7 @@ public class DRCARTDeathReportManager extends ActivatedReportManager {
 	
 	@Override
 	public boolean isActivated() {
-		//return inizService.getBooleanFromKey("report.drc.hivStage.active", false);
+		//return inizService.getBooleanFromKey("report.drc.active", false);
 		return true;
 		
 	}

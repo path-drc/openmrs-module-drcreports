@@ -50,7 +50,7 @@ public class DRCARTFirstLineBelowFifteenYearsReportManager extends ActivatedRepo
 	
 	@Override
 	public boolean isActivated() {
-		//return inizService.getBooleanFromKey("report.drc.hivStage.active", false);
+		//return inizService.getBooleanFromKey("report.drc.active", false);
 		return true;
 		
 	}
@@ -248,13 +248,13 @@ public class DRCARTFirstLineBelowFifteenYearsReportManager extends ActivatedRepo
 	
 	private void setColumnNames() {
 		
-		col1 = MessageUtil.translate("commonreports.report.drc.hivStage.males.label");
-		col2 = MessageUtil.translate("commonreports.report.drc.hivStage.females.label");
-		col3 = MessageUtil.translate("commonreports.report.drc.hivStage.allGenders.label");
-		col4 = MessageUtil.translate("commonreports.report.drc.hivStage.belowOneYr.label");
-		col5 = MessageUtil.translate("commonreports.report.drc.hivStage.oneToFourYrs.label");
-		col6 = MessageUtil.translate("commonreports.report.drc.hivStage.fiveToNineYrs.label");
-		col7 = MessageUtil.translate("commonreports.report.drc.hivStage.tenToFourteenYrs.label");
+		col1 = MessageUtil.translate("commonreports.report.drc.males.label");
+		col2 = MessageUtil.translate("commonreports.report.drc.females.label");
+		col3 = MessageUtil.translate("commonreports.report.drc.allGenders.label");
+		col4 = MessageUtil.translate("commonreports.report.drc.belowOneYr.label");
+		col5 = MessageUtil.translate("commonreports.report.drc.oneToFourYrs.label");
+		col6 = MessageUtil.translate("commonreports.report.drc.fiveToNineYrs.label");
+		col7 = MessageUtil.translate("commonreports.report.drc.tenToFourteenYrs.label");
 		
 	}
 	
