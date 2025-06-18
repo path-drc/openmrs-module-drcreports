@@ -49,7 +49,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 	
 	@Override
 	public boolean isActivated() {
-		//return inizService.getBooleanFromKey("report.drc.hivStage.active", false);
+		//return inizService.getBooleanFromKey("report.drc.active", false);
 		return true;
 		
 	}
@@ -80,11 +80,6 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 	
 	private Parameter getEndDateParameter() {
 		return new Parameter("endDate", MessageUtil.translate("commonreports.report.util.reportingEndDate"), Date.class);
-	}
-	
-	private Parameter getDefaultDateParameter() {
-		return new Parameter("defaultDateTime", "Default Obs Date", Date.class, null,
-		        DateUtil.parseDate("1970-01-01", "yyyy-MM-dd"));
 	}
 	
 	public String getHivStage3And4Name() {
@@ -122,7 +117,6 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		List<Parameter> params = new ArrayList<Parameter>();
 		params.add(getStartDateParameter());
 		params.add(getEndDateParameter());
-		params.add(getDefaultDateParameter());
 		
 		return params;
 	}
@@ -141,9 +135,7 @@ public class DRCHIVStageReportManager extends ActivatedReportManager {
 		rd.addDataSetDefinition(getHivStage3And4Name(), Mapped.mapStraightThrough(hivStage3And4));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
-		//parameterMappings.put("onOrAfter", "${startDate}");
-		parameterMappings.put("onOrAfter", "${defaultDateTime}");
-		
+		parameterMappings.put("onOrAfter", "${startDate}");
 		parameterMappings.put("onOrBefore", "${endDate}");
 		parameterMappings.put("startedOnOrAfter", "${startDate}");
 		parameterMappings.put("startedOnOrBefore", "${endDate}");
