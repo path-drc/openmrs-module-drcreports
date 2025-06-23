@@ -130,15 +130,14 @@ public class DRCARTAbandonmentReportManager extends ActivatedReportManager {
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
 		// ART plan -> Started drugs
-		// No Visit in past 90 days
-		// Not transferred in past 6 months (which would explain why missing in the 3months if done earlier)
-		// Refused ART in past 6 months (which would explain why missing in the 3months if done earlier)
+		// AND (No Visit in past 90 days AND Not transferred out in past 90 days)
+		// OR (Refused ART in past 90 days)
 		
 		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND c_answer.uuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0) "
-		        + "AND NOT EXISTS (SELECT 1 FROM visit v WHERE v.patient_id = p.patient_id AND v.date_started BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore AND v.voided = 0) "
-		        + "AND NOT EXISTS (SELECT 1 FROM obs o_date JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_date.person_id = p.patient_id AND c_date.uuid = '160649AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_date.voided = 0 AND o_date.value_datetime BETWEEN DATE_SUB(:onOrBefore, INTERVAL 180 DAY) AND :onOrBefore ) "
-		        + "AND EXISTS (SELECT 1 FROM obs o_date JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_date.person_id = p.patient_id AND c_date.uuid = '162572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_date.voided = 0 AND o_date.value_datetime BETWEEN DATE_SUB(:onOrBefore, INTERVAL 180 DAY) AND :onOrBefore ); ";
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND c_answer.uuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0) " // STARTED DRUGS
+		        + "AND ((NOT EXISTS (SELECT 1 FROM visit v WHERE v.patient_id = p.patient_id AND v.date_started BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore AND v.voided = 0) " // NO VISIT IN 90 DAYS
+		        + "AND NOT EXISTS (SELECT 1 FROM obs o_transfer JOIN concept c_transfer ON o_transfer.concept_id = c_transfer.concept_id WHERE o_transfer.person_id = p.patient_id AND c_transfer.uuid = '160649AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_transfer.voided = 0 AND o_transfer.value_datetime BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore)) " // NOT TRANSFERRED OUT
+		        + "OR EXISTS (SELECT 1 FROM obs o_refused JOIN concept c_refused ON o_refused.concept_id = c_refused.concept_id WHERE o_refused.person_id = p.patient_id AND c_refused.uuid = '162572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_refused.voided = 0 AND o_refused.value_datetime BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore)); "; // REFUSED ART
 		
 		sqd.setQuery(sql);
 		sqd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
