@@ -43,14 +43,14 @@ import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
 
 @Component
-public class DRCARTPDVReportManager extends ActivatedReportManager {
+public class DRCARTAbandonmentReportManager extends ActivatedReportManager {
 	
 	@Autowired
 	private InitializerService inizService;
 	
 	@Override
 	public boolean isActivated() {
-		//return inizService.getBooleanFromKey("report.drc.active", false);
+		//return inizService.getBooleanFromKey("report.drc.hivStage.active", false);
 		return true;
 		
 	}
@@ -62,17 +62,17 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 	
 	@Override
 	public String getUuid() {
-		return "7e2e8afb-46cf-48a7-8195-d6ce877b30b8";
+		return "b0e1e4a6-749a-4741-b13c-4f4644c9df91";
 	}
 	
 	@Override
 	public String getName() {
-		return MessageUtil.translate("commonreports.report.drc.artPDV.reportName");
+		return MessageUtil.translate("commonreports.report.drc.artAbandonment.reportName");
 	}
 	
 	@Override
 	public String getDescription() {
-		return MessageUtil.translate("commonreports.report.drc.artPDV.reportDescription");
+		return MessageUtil.translate("commonreports.report.drc.artAbandonment.reportDescription");
 	}
 	
 	private Parameter getReportingDateParameter() {
@@ -119,10 +119,10 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 		
-		// artPDV Grouping
-		CohortCrossTabDataSetDefinition artPDV = new CohortCrossTabDataSetDefinition();
-		artPDV.addParameters(getParameters());
-		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(artPDV));
+		// artAbandonment Grouping
+		CohortCrossTabDataSetDefinition artAbandonment = new CohortCrossTabDataSetDefinition();
+		artAbandonment.addParameters(getParameters());
+		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(artAbandonment));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
 		parameterMappings.put("onOrBefore", "${onOrBefore}");
@@ -130,12 +130,14 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
 		// ART plan -> Started drugs
-		// Visit in past 90 days
-		// Not transferred in past 6 months
+		// AND (No Visit in past 90 days AND Not transferred out in past 90 days)
+		// OR (Refused ART in past 90 days)
+		
 		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND c_answer.uuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0) "
-		        + "AND EXISTS (SELECT 1 FROM visit v WHERE v.patient_id = p.patient_id AND v.date_started BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore AND v.voided = 0) "
-		        + "AND NOT EXISTS (SELECT 1 FROM obs o_date JOIN concept c_date ON o_date.concept_id = c_date.concept_id WHERE o_date.person_id = p.patient_id AND c_date.uuid = '160649AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_date.voided = 0 AND o_date.value_datetime BETWEEN DATE_SUB(:onOrBefore, INTERVAL 180 DAY) AND :onOrBefore ); ";
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND c_answer.uuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0) " // STARTED DRUGS
+		        + "AND ((NOT EXISTS (SELECT 1 FROM visit v WHERE v.patient_id = p.patient_id AND v.date_started BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore AND v.voided = 0) " // NO VISIT IN 90 DAYS
+		        + "AND NOT EXISTS (SELECT 1 FROM obs o_transfer JOIN concept c_transfer ON o_transfer.concept_id = c_transfer.concept_id WHERE o_transfer.person_id = p.patient_id AND c_transfer.uuid = '160649AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_transfer.voided = 0 AND o_transfer.value_datetime BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore)) " // NOT TRANSFERRED OUT
+		        + "OR EXISTS (SELECT 1 FROM obs o_refused JOIN concept c_refused ON o_refused.concept_id = c_refused.concept_id WHERE o_refused.person_id = p.patient_id AND c_refused.uuid = '162572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_refused.voided = 0 AND o_refused.value_datetime BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore)); "; // REFUSED ART
 		
 		sqd.setQuery(sql);
 		sqd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
@@ -146,22 +148,22 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
 		ccd.initializeFromElements(sqd, livePatients);
-		artPDV.addRow(getName(), ccd, parameterMappings);
+		artAbandonment.addRow(getName(), ccd, parameterMappings);
 		
 		setColumnNames();
 		
 		GenderCohortDefinition males = new GenderCohortDefinition();
 		males.setMaleIncluded(true);
-		artPDV.addColumn(col1, createCohortComposition(males), null);
+		artAbandonment.addColumn(col1, createCohortComposition(males), null);
 		
 		GenderCohortDefinition females = new GenderCohortDefinition();
 		females.setFemaleIncluded(true);
-		artPDV.addColumn(col2, createCohortComposition(females), null);
+		artAbandonment.addColumn(col2, createCohortComposition(females), null);
 		
 		GenderCohortDefinition allGenders = new GenderCohortDefinition();
 		allGenders.setFemaleIncluded(true);
 		allGenders.setMaleIncluded(true);
-		artPDV.addColumn(col3, createCohortComposition(allGenders), null);
+		artAbandonment.addColumn(col3, createCohortComposition(allGenders), null);
 		
 		// < 1 year
 		AgeCohortDefinition under1y = new AgeCohortDefinition();
@@ -170,7 +172,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col4, createCohortComposition(under1y), null);
+		artAbandonment.addColumn(col4, createCohortComposition(under1y), null);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -179,7 +181,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col5, createCohortComposition(_1To4y), null);
+		artAbandonment.addColumn(col5, createCohortComposition(_1To4y), null);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -188,7 +190,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col6, createCohortComposition(_5To9y), null);
+		artAbandonment.addColumn(col6, createCohortComposition(_5To9y), null);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -197,7 +199,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col7, createCohortComposition(_10To14y), null);
+		artAbandonment.addColumn(col7, createCohortComposition(_10To14y), null);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -206,7 +208,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col8, createCohortComposition(_15To19y), null);
+		artAbandonment.addColumn(col8, createCohortComposition(_15To19y), null);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -215,7 +217,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col9, createCohortComposition(_20To24y), null);
+		artAbandonment.addColumn(col9, createCohortComposition(_20To24y), null);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -224,7 +226,7 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col10, createCohortComposition(_25To49y), null);
+		artAbandonment.addColumn(col10, createCohortComposition(_25To49y), null);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -233,24 +235,24 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artPDV.addColumn(col11, createCohortComposition(_50andAbove), null);
+		artAbandonment.addColumn(col11, createCohortComposition(_50andAbove), null);
 		
 		return rd;
 	}
 	
 	private void setColumnNames() {
 		
-		col1 = MessageUtil.translate("commonreports.report.drc.males.label");
-		col2 = MessageUtil.translate("commonreports.report.drc.females.label");
-		col3 = MessageUtil.translate("commonreports.report.drc.allGenders.label");
-		col4 = MessageUtil.translate("commonreports.report.drc.belowOneYr.label");
-		col5 = MessageUtil.translate("commonreports.report.drc.oneToFourYrs.label");
-		col6 = MessageUtil.translate("commonreports.report.drc.fiveToNineYrs.label");
-		col7 = MessageUtil.translate("commonreports.report.drc.tenToFourteenYrs.label");
-		col8 = MessageUtil.translate("commonreports.report.drc.fifteenToNineteenYrs.label");
-		col9 = MessageUtil.translate("commonreports.report.drc.twentyToTwentyFourYrs.label");
-		col10 = MessageUtil.translate("commonreports.report.drc.twentyFiveToFourtyNineYrs.label");
-		col11 = MessageUtil.translate("commonreports.report.drc.fiftyAndAbove.label");
+		col1 = MessageUtil.translate("commonreports.report.drc.hivStage.males.label");
+		col2 = MessageUtil.translate("commonreports.report.drc.hivStage.females.label");
+		col3 = MessageUtil.translate("commonreports.report.drc.hivStage.allGenders.label");
+		col4 = MessageUtil.translate("commonreports.report.drc.hivStage.belowOneYr.label");
+		col5 = MessageUtil.translate("commonreports.report.drc.hivStage.oneToFourYrs.label");
+		col6 = MessageUtil.translate("commonreports.report.drc.hivStage.fiveToNineYrs.label");
+		col7 = MessageUtil.translate("commonreports.report.drc.hivStage.tenToFourteenYrs.label");
+		col8 = MessageUtil.translate("commonreports.report.drc.hivStage.fifteenToNineteenYrs.label");
+		col9 = MessageUtil.translate("commonreports.report.drc.hivStage.twentyToTwentyFourYrs.label");
+		col10 = MessageUtil.translate("commonreports.report.drc.hivStage.twentyFiveToFourtyNineYrs.label");
+		col11 = MessageUtil.translate("commonreports.report.drc.hivStage.fiftyAndAbove.label");
 		
 	}
 	
@@ -263,6 +265,6 @@ public class DRCARTPDVReportManager extends ActivatedReportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		return Arrays
-		        .asList(ReportManagerUtil.createCsvReportDesign("1e7aefa6-af43-4f8f-996f-e727dba483ce", reportDefinition));
+		        .asList(ReportManagerUtil.createCsvReportDesign("13cfa070-271e-48ce-a854-3ebc080c890f", reportDefinition));
 	}
 }
