@@ -14,7 +14,7 @@
 
 	<!-- Patient Type at Enrolment-->
 	<concept concept_id="862" retired="false" datatype_id="2" class_id="7" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="83e40f2c-c316-43e6-a12e-20a338100281" />
-	<!-- Transfer-->
+	<!-- Transfer-In-->
 	<concept concept_id="863" retired="false" datatype_id="2" class_id="7" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="160563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
 	<!-- 	Antiretroviral treatment start date-->
 	<concept concept_id="864" retired="false" datatype_id="6" class_id="5" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="159599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
