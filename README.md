@@ -1,9 +1,9 @@
-# "Common Reports" OpenMRS module
-Common Reports bundles reports defined and evaluated by the [OpenMRS Reporting module](https://github.com/openmrs/openmrs-module-reporting).
+# "DRC Reports" OpenMRS module
+DRC Reports bundles reports defined and evaluated by the [OpenMRS Reporting module](https://github.com/openmrs/openmrs-module-reporting).
 
 It bundles two groups of reports:
 1. **All-use reports** that are activated by default or
-1. **Use-case specific reports** that need to be explicitely activated through Initializer's ['jsonkeyvalues'](https://github.com/mekomsolutions/openmrs-module-initializer/blob/master/readme/jsonkeyvalues.md#domain-jsonkeyvalues).<br/>:warning: Common Reports holds a hard dependency on Initializer ⇒ both modules need to be installed for Common Reports to work properly.
+1. **Use-case specific reports** that need to be explicitely activated through Initializer's ['jsonkeyvalues'](https://github.com/mekomsolutions/openmrs-module-initializer/blob/master/readme/jsonkeyvalues.md#domain-jsonkeyvalues).<br/>:warning: DRC Reports holds a hard dependency on Initializer ⇒ both modules need to be installed for DRC Reports to work properly.
 
 ## List of Embedded Reports:
 ### General use reports (always activated)
