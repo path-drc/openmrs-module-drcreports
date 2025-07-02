@@ -10,7 +10,7 @@
 	<author>${project.parent.organization.name}</author>
 	<description>${project.parent.description}</description>
 
-	<activator>@MODULE_PACKAGE@.CommonReportsActivator</activator>
+	<activator>@MODULE_PACKAGE@.DRCReportsActivator</activator>
 
 	<require_version>${openmrsPlatformVersion}</require_version>
 
@@ -35,14 +35,14 @@
 		<property>@MODULE_ID@.phoneNumberUuid</property>
 		<defaultValue>c3bcd296-eb82-4451-a4b4-eedd1d5f322f</defaultValue>
 		<description>
-			The UUID of the phone number that would be used by Common Reports reports
+			The UUID of the phone number that would be used by DRC Reports reports
 		</description>
 	</globalProperty>
 	<globalProperty>
 		<property>@MODULE_ID@.2ndPhoneNumberUuid</property>
 		<defaultValue>1102f74e-ea2f-461e-b67f-db58bd136e5c</defaultValue>
 		<description>
-			The UUID of the 2nd phone number that would be used by Common Reports
+			The UUID of the 2nd phone number that would be used by DRC Reports
 			reports
 		</description>
 	</globalProperty>
@@ -74,4 +74,3 @@
 	<!-- /Conditional Resources -->
 
 </module>
-
