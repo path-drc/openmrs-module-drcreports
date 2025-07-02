@@ -1,4 +1,4 @@
-package org.openmrs.module.commonreports.reports;
+package org.openmrs.module.drcreports.reports;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -48,7 +48,7 @@ public class DRCARTTransferOutReportManagerTest extends BaseModuleContextSensiti
 	@Before
 	public void setup() throws Exception {
 		executeDataSet("org/openmrs/module/reporting/include/ReportTestDataset-openmrs-2.0.xml");
-		executeDataSet("org/openmrs/module/commonreports/include/DRCARTTransferOutTestDataset.xml");
+		executeDataSet("org/openmrs/module/drcreports/include/DRCARTTransferOutTestDataset.xml");
 		
 		String path = getClass().getClassLoader().getResource("testAppDataDir").getPath() + File.separator;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", path);
