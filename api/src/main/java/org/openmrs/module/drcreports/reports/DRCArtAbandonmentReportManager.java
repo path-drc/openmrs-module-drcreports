@@ -25,7 +25,6 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -229,17 +228,17 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 	
 	private void setColumnNames() {
 		
-		col1 = MessageUtil.translate("drcreports.report.drc.hivStage.males.label");
-		col2 = MessageUtil.translate("drcreports.report.drc.hivStage.females.label");
-		col3 = MessageUtil.translate("drcreports.report.drc.hivStage.allGenders.label");
-		col4 = MessageUtil.translate("drcreports.report.drc.hivStage.belowOneYr.label");
-		col5 = MessageUtil.translate("drcreports.report.drc.hivStage.oneToFourYrs.label");
-		col6 = MessageUtil.translate("drcreports.report.drc.hivStage.fiveToNineYrs.label");
-		col7 = MessageUtil.translate("drcreports.report.drc.hivStage.tenToFourteenYrs.label");
-		col8 = MessageUtil.translate("drcreports.report.drc.hivStage.fifteenToNineteenYrs.label");
-		col9 = MessageUtil.translate("drcreports.report.drc.hivStage.twentyToTwentyFourYrs.label");
-		col10 = MessageUtil.translate("drcreports.report.drc.hivStage.twentyFiveToFourtyNineYrs.label");
-		col11 = MessageUtil.translate("drcreports.report.drc.hivStage.fiftyAndAbove.label");
+		col1 = MessageUtil.translate("drcreports.report.drc.males.label");
+		col2 = MessageUtil.translate("drcreports.report.drc.females.label");
+		col3 = MessageUtil.translate("drcreports.report.drc.allGenders.label");
+		col4 = MessageUtil.translate("drcreports.report.drc.belowOneYr.label");
+		col5 = MessageUtil.translate("drcreports.report.drc.oneToFourYrs.label");
+		col6 = MessageUtil.translate("drcreports.report.drc.fiveToNineYrs.label");
+		col7 = MessageUtil.translate("drcreports.report.drc.tenToFourteenYrs.label");
+		col8 = MessageUtil.translate("drcreports.report.drc.fifteenToNineteenYrs.label");
+		col9 = MessageUtil.translate("drcreports.report.drc.twentyToTwentyFourYrs.label");
+		col10 = MessageUtil.translate("drcreports.report.drc.twentyFiveToFourtyNineYrs.label");
+		col11 = MessageUtil.translate("drcreports.report.drc.fiftyAndAbove.label");
 		
 	}
 	
