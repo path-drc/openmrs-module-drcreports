@@ -63,8 +63,8 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 	
 	private Parameter getReportingDateParameter() {
 		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		return new Parameter("onOrBefore", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class,
-		        null, DateUtil.parseDate(today, "yyyy-MM-dd"));
+		return new Parameter("endDate", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class, null,
+		        DateUtil.parseDate(today, "yyyy-MM-dd"));
 	}
 	
 	public static String col1 = "";
@@ -111,7 +111,7 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(artAbandonment));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
-		parameterMappings.put("onOrBefore", "${onOrBefore}");
+		parameterMappings.put("onOrBefore", "${endDate}");
 		
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
