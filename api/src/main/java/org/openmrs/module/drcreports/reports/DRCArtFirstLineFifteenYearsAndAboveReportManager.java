@@ -25,7 +25,6 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -161,7 +160,7 @@ public class DRCArtFirstLineFifteenYearsAndAboveReportManager extends ActivatedR
 		CompositionCohortDefinition ccd3 = new CompositionCohortDefinition();
 		ccd3.initializeFromElements(sqd3, livePatients);
 		
-		artFirstLineFifteenYearsAndAbove.addRow(MessageUtil.translate("drcreports.report.drc.ABC+3TC+pDTG"), ccd,
+		artFirstLineFifteenYearsAndAbove.addRow(MessageUtil.translate("drcreports.report.drc.ABC+3TC+DTG"), ccd,
 		    parameterMappings);
 		
 		setColumnNames();
