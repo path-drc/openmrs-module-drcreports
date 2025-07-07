@@ -25,7 +25,6 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -64,8 +63,8 @@ public class DRCFacilityBasedArtDeliveryReportManager extends ActivatedReportMan
 	
 	private Parameter getReportingDateParameter() {
 		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		return new Parameter("onOrBefore", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class,
-		        null, DateUtil.parseDate(today, "yyyy-MM-dd"));
+		return new Parameter("endDate", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class, null,
+		        DateUtil.parseDate(today, "yyyy-MM-dd"));
 	}
 	
 	public static String col1 = "";
@@ -112,7 +111,7 @@ public class DRCFacilityBasedArtDeliveryReportManager extends ActivatedReportMan
 		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(facilityBasedARTDelivery));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
-		parameterMappings.put("onOrBefore", "${onOrBefore}");
+		parameterMappings.put("onOrBefore", "${endDate}");
 		
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
