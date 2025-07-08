@@ -1,13 +1,10 @@
 package org.openmrs.module.drcreports.reports;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Cohort;
@@ -26,6 +23,10 @@ import org.openmrs.module.reporting.report.service.ReportService;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class DRCARTDeathReportManagerTest extends BaseModuleContextSensitiveTest {
 	
@@ -67,7 +68,7 @@ public class DRCARTDeathReportManagerTest extends BaseModuleContextSensitiveTest
 		ReportManagerUtil.setupReport(manager);
 		
 		// verify
-		Assert.assertNotNull(rs.getReportDesignByUuid("b26dc58c-9cdc-405a-8ba6-1e6462e4d66f"));
+		assertThat(rs.getReportDesignByUuid("b26dc58c-9cdc-405a-8ba6-1e6462e4d66f"), is(notNullValue()));
 		
 	}
 	
