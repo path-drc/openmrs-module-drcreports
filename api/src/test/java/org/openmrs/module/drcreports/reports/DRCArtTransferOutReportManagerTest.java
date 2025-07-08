@@ -27,9 +27,10 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-public class DRCARTTransferOutReportManagerTest extends BaseModuleContextSensitiveTest {
+public class DRCArtTransferOutReportManagerTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService iniz;
 	
 	@Autowired
