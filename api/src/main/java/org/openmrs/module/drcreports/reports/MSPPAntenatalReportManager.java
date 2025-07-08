@@ -31,12 +31,14 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component(DRCReportsConstants.COMPONENT_REPORTMANAGER_ANTENATAL)
 public class MSPPAntenatalReportManager extends ActivatedReportManager {
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override

@@ -43,7 +43,7 @@ public class DRCARTTransferOutReportManagerTest extends BaseModuleContextSensiti
 	private ConceptService cs;
 	
 	@Autowired
-	private DRCARTTransferOutReportManager manager;
+	private DRCArtTransferOutReportManager manager;
 	
 	@Before
 	public void setup() throws Exception {

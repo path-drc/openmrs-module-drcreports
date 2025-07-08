@@ -40,13 +40,14 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DRCARTSecondLineReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
+public class DRCArtSecondLineReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
 	
-	public DRCARTSecondLineReportManagerTest() throws SQLException {
+	public DRCArtSecondLineReportManagerTest() throws SQLException {
 		super();
 	}
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService iniz;
 	
 	@Autowired
@@ -60,7 +61,7 @@ public class DRCARTSecondLineReportManagerTest extends BaseModuleContextSensitiv
 	private ConceptService cs;
 	
 	@Autowired
-	private DRCARTSecondLineReportManager manager;
+	private DRCArtSecondLineReportManager manager;
 	
 	@Override
 	public void executeDataSet(IDataSet dataset) {

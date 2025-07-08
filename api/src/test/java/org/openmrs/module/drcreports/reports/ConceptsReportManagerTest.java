@@ -8,9 +8,7 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openmrs.module.drcreports.reports.BaseModuleContextSensitiveMysqlBackedTest;
 import org.openmrs.module.drcreports.ActivatedReportManager;
-import org.openmrs.module.initializer.api.InitializerService;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
@@ -30,12 +28,11 @@ public class ConceptsReportManagerTest extends BaseModuleContextSensitiveMysqlBa
 	}
 	
 	@Autowired
-	private InitializerService iniz;
-	
-	@Autowired
+	@Qualifier("reportingReportService")
 	private ReportService rs;
 	
 	@Autowired
+	@Qualifier("reportingReportDefinitionService")
 	private ReportDefinitionService rds;
 	
 	@Autowired

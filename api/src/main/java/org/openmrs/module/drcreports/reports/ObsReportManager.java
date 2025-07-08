@@ -23,12 +23,14 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ObsReportManager extends ActivatedReportManager {
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override

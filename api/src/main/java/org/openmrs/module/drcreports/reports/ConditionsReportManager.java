@@ -20,11 +20,13 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.openmrs.annotation.OpenmrsProfile;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @OpenmrsProfile(modules = { "emrapi:1.5 - 1.2*" })
 public class ConditionsReportManager extends ActivatedReportManager {
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override

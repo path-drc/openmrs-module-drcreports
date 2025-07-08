@@ -79,6 +79,7 @@ public class MSPPChildCareReportManager extends ActivatedReportManager {
 	private String cCol9 = "";
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Autowired
