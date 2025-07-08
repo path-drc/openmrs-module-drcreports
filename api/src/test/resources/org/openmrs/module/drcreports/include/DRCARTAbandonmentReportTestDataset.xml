@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+	<person person_id="15" gender="F" birthdate="1992-04-08 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2021-04-10 00:00:00.0" voided="false" uuid="9e6065af-bb72-4950-9cbe-3485ede16a61" />
+	<patient patient_id="15" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2021-06-02 12:29:59.0" voided="false" void_reason="" />
+
+	<person person_id="16" gender="M" birthdate="2005-04-08 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2021-04-10 00:00:00.0" voided="false" uuid="4f895f0e-ac1f-46b9-a91d-8855d556672c" />
+	<patient patient_id="16" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2021-06-02 12:29:59.0" voided="false" void_reason="" />
+
+	<visit_type visit_type_id="11" name="General" description="General Visit Description" creator="1" date_created="2021-05-05 00:00:00.0" retired="false" uuid="34b74c43-8beb-4c29-95f3-e9f8d7a11bc4" />
+	<visit visit_id="16" patient_id="16" visit_type_id="11" date_started="2025-05-05 00:00:00.0" location_id="1" indication_concept_id="5497" creator="1" date_created="2024-01-01 00:00:00.0" voided="0" uuid="082a25c6-6fdc-4c33-85c7-e8faded20596" />
+	<visit visit_id="17" patient_id="15" visit_type_id="11" date_started="2024-11-26 00:00:00.0" location_id="1" indication_concept_id="5497" creator="1" date_created="2025-06-26 00:00:00.0" voided="0" uuid="082a25c6-6fdc-4c33-85c7-e8faded20597" />
+
+	<encounter encounter_id="16" encounter_type="2" visit_id="16" patient_id="16" location_id="1" form_id="2" encounter_datetime="2025-06-05 00:00:00.0" creator="1" date_created="2024-06-02 14:09:05.0" voided="false" void_reason="" uuid="37ec8a29-dba1-455a-a808-794ec883fcc8" />
+	<encounter encounter_id="17" encounter_type="2" visit_id="17" patient_id="15" location_id="1" form_id="2" encounter_datetime="2025-06-05 00:00:00.0" creator="1" date_created="2025-06-26 14:09:05.0" voided="false" void_reason="" uuid="37ec8a29-dba1-455a-a808-794ec883fcc9" />
+
+	<!-- Antiretroviral plan -->
+	<concept concept_id="862" retired="false" datatype_id="2" class_id="7" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+	<!-- Start drugs -->
+	<concept concept_id="863" retired="false" datatype_id="4" class_id="5" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+	<!-- Date patient refused HIV care/treatment -->
+	<concept concept_id="864" retired="false" datatype_id="6" class_id="5" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="162572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+
+	<concept_name concept_id="862" name="Antiretroviral plan" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9036" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="666947cb-18da-4287-b579-15023917b6b3" />
+	<concept_name concept_id="863" name="Start drugs " locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9037" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="766947cb-18da-4287-b579-15023917b6b3" />
+	<concept_name concept_id="864" name="Date patient refused HIV care/treatment" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9038" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="676947cb-18da-4287-b579-15023917b6b4" />
+
+	<!--  	Antiretroviral plan -> Start drugs -->
+	<obs obs_id="4003" person_id="15" concept_id="862" encounter_id="17" obs_group_id="[NULL]" obs_datetime="2025-06-26 00:00:00.0" location_id="1" value_coded="863" comments="" creator="1" date_created="2025-06-26 14:09:35.0" voided="false" value_coded_name_id="[NULL]" value_complex="[NULL]" value_text="[NULL]" value_numeric="[NULL]" value_datetime="[NULL]" value_drug="[NULL]" uuid="90b6abe2-eef9-4d03-aba7-5363a591cb1a" />
+	<!--  	Antiretroviral plan -> Start drugs   -->
+	<obs obs_id="4004" person_id="16" concept_id="862" encounter_id="16" obs_group_id="[NULL]" obs_datetime="2025-06-26 00:00:00.0" location_id="1" value_coded="863" comments="" creator="1" date_created="2025-06-26 14:09:35.0" voided="false" value_coded_name_id="[NULL]" value_complex="[NULL]" value_text="[NULL]" value_numeric="[NULL]" value_datetime="[NULL]" value_drug="[NULL]" uuid="530e1581-f6eb-4df2-8649-a39d2f23b9e4" />
+	
+	<!--  Date patient refused HIV care/treatment -->
+	<obs obs_id="4005" person_id="16" concept_id="864" encounter_id="16" obs_group_id="[NULL]" obs_datetime="2025-06-26 00:00:00.0" location_id="1" value_coded="[NULL]" comments="" creator="1" date_created="2025-06-26 14:09:35.0" voided="false" value_coded_name_id="[NULL]" value_complex="[NULL]" value_text="[NULL]" value_numeric="[NULL]" value_datetime="2025-06-26 14:09:35.0" value_drug="[NULL]" uuid="90b6abe2-eef9-4d03-aba7-5363a591cb1b" />
+
+</dataset>
