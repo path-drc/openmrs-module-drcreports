@@ -40,9 +40,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class DRCArtSecondLineReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
+public class DRCArtHepatitisReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
 	
-	public DRCArtSecondLineReportManagerTest() throws SQLException {
+	public DRCArtHepatitisReportManagerTest() throws SQLException {
 		super();
 	}
 	
@@ -61,7 +61,7 @@ public class DRCArtSecondLineReportManagerTest extends BaseModuleContextSensitiv
 	private ConceptService cs;
 	
 	@Autowired
-	private DRCArtSecondLineReportManager manager;
+	private DRCArtHepatitisReportManager manager;
 	
 	@Override
 	public void executeDataSet(IDataSet dataset) {
@@ -88,7 +88,7 @@ public class DRCArtSecondLineReportManagerTest extends BaseModuleContextSensitiv
 	public void setUp() throws Exception {
 		updateDatabase("org/openmrs/module/drcreports/liquibase/test-liquibase.xml");
 		executeDataSet("org/openmrs/module/reporting/include/ReportTestDataset-openmrs-2.0.xml");
-		executeDataSet("org/openmrs/module/drcreports/include/DRCARTSecondLineReportTestDataset.xml");
+		executeDataSet("org/openmrs/module/drcreports/include/DRCArtHepatitisReportTestDataset.xml");
 		
 		String path = getClass().getClassLoader().getResource("testAppDataDir").getPath() + File.separator;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", path);
@@ -108,7 +108,7 @@ public class DRCArtSecondLineReportManagerTest extends BaseModuleContextSensitiv
 		ReportManagerUtil.setupReport(manager);
 		
 		// verify
-		assertThat(rs.getReportDesignByUuid("9f9e10f1-2733-45b2-8b2f-8695ed03b3ab"), is(notNullValue()));
+		assertThat(rs.getReportDesignByUuid("0a4b31cf-bc98-4378-b585-6169a1a30053"), is(notNullValue()));
 		
 	}
 	
@@ -136,23 +136,30 @@ public class DRCArtSecondLineReportManagerTest extends BaseModuleContextSensitiv
 	
 	private Map<String, Integer> getColumnValues() {
 		Map<String, Integer> map = new HashMap<String, Integer>();
-		map.put("AZT/3TC + LPV/r.Females", 1);
-		map.put("AZT/3TC + LPV/r.Males", 0);
-		map.put("AZT/3TC + LPV/r.All", 1);
-		map.put("AZT/3TC + LPV/r.10-14 years", 0);
-		map.put("AZT/3TC + LPV/r.15-19 years", 0);
-		map.put("AZT/3TC + LPV/r.20-24 years", 0);
-		map.put("AZT/3TC + LPV/r.25-49 years", 1);
-		map.put("AZT/3TC + LPV/r.50+ years", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus.Females", 1);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus.Males", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus.All", 1);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus.< 15 years", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus.> 15 years", 1);
 		
-		map.put("AZT/3TC +ATV/r.Females", 0);
-		map.put("AZT/3TC +ATV/r.Males", 1);
-		map.put("AZT/3TC +ATV/r.All", 1);
-		map.put("AZT/3TC +ATV/r.10-14 years", 1);
-		map.put("AZT/3TC +ATV/r.15-19 years", 0);
-		map.put("AZT/3TC +ATV/r.20-24 years", 0);
-		map.put("AZT/3TC +ATV/r.25-49 years", 0);
-		map.put("AZT/3TC +ATV/r.50+ years", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus with positive results.Females", 1);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus with positive results.Males", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus with positive results.All", 1);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus with positive results.< 15 years", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis B virus with positive results.> 15 years", 1);
+		
+		map.put("PLHIV starting ART who were screened for hepatitis C virus.Females", 1);
+		map.put("PLHIV starting ART who were screened for hepatitis C virus.Males", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis C virus.All", 1);
+		map.put("PLHIV starting ART who were screened for hepatitis C virus.< 15 years", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis C virus.> 15 years", 1);
+		
+		map.put("PLHIV starting ART who were screened for hepatitis C virus with positive results.Females", 1);
+		map.put("PLHIV starting ART who were screened for hepatitis C virus with positive results.Males", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis C virus with positive results.All", 1);
+		map.put("PLHIV starting ART who were screened for hepatitis C virus with positive results.< 15 years", 0);
+		map.put("PLHIV starting ART who were screened for hepatitis C virus with positive results.> 15 years", 1);
+		
 		return map;
 		
 	}

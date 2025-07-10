@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dataset>
+
+	<person person_id="15" gender="F" birthdate="1994-04-08 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2021-04-10 00:00:00.0" voided="false" uuid="9e6065af-bb72-4950-9cbe-3485ede16a61" />
+	<patient patient_id="15" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2021-06-02 12:29:59.0" voided="false" void_reason="" />
+
+	<person person_id="16" gender="M" birthdate="2013-04-08 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2021-04-10 00:00:00.0" voided="false" uuid="4f895f0e-ac1f-46b9-a91d-8855d556672c" />
+	<patient patient_id="16" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2021-06-02 12:29:59.0" voided="false" void_reason="" />
+
+	<visit_type visit_type_id="11" name="General" description="General Visit Description" creator="1" date_created="2021-05-05 00:00:00.0" retired="false" uuid="34b74c43-8beb-4c29-95f3-e9f8d7a11bc4" />
+	<visit visit_id="15" patient_id="15" visit_type_id="11" date_started="2025-06-26 00:00:00.0" location_id="1" indication_concept_id="5497" creator="1" date_created="2025-06-26 00:00:00.0" voided="0" uuid="082a25c6-6fdc-4c33-85c7-e8faded20597" />
+	<visit visit_id="16" patient_id="16" visit_type_id="11" date_started="2025-06-05 00:00:00.0" location_id="1" indication_concept_id="5497" creator="1" date_created="2024-01-01 00:00:00.0" voided="0" uuid="082a25c6-6fdc-4c33-85c7-e8faded20596" />
+
+	<encounter encounter_id="15" encounter_type="2" visit_id="15" patient_id="15" location_id="1" form_id="2" encounter_datetime="2025-06-05 00:00:00.0" creator="1" date_created="2025-06-26 14:09:05.0" voided="false" void_reason="" uuid="37ec8a29-dba1-455a-a808-794ec883fcc9" />
+	<encounter encounter_id="16" encounter_type="2" visit_id="16" patient_id="16" location_id="1" form_id="2" encounter_datetime="2025-06-05 00:00:00.0" creator="1" date_created="2024-06-02 14:09:05.0" voided="false" void_reason="" uuid="37ec8a29-dba1-455a-a808-794ec883fcc8" />
+
+	<!-- Antiretroviral plan -->
+	<concept concept_id="862" retired="false" datatype_id="2" class_id="7" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+	<!-- Start drugs -->
+	<concept concept_id="863" retired="false" datatype_id="4" class_id="5" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+	<!-- Hepatitis B Surface Antigen Test -->
+	<concept concept_id="864" retired="false" datatype_id="2" class_id="1" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="159430AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+	<!-- Positive -->
+	<concept concept_id="865" retired="false" datatype_id="4" class_id="5" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="703AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+	<!-- Patient Type at Enrolment -->
+	<concept concept_id="866" retired="false" datatype_id="2" class_id="7" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="83e40f2c-c316-43e6-a12e-20a338100281" />
+	<!-- New client -->
+	<concept concept_id="867" retired="false" datatype_id="2" class_id="7" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+	<!-- Hepatitis C Surface Antigen Test -->
+	<concept concept_id="868" retired="false" datatype_id="2" class_id="1" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="1325AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+
+	<concept_name concept_id="862" name="Antiretroviral plan" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9036" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="666947cb-18da-4287-b579-15023917b6b3" />
+	<concept_name concept_id="863" name="Start drugs" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9037" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="766947cb-18da-4287-b579-15023917b6b3" />
+	<concept_name concept_id="864" name="Hepatitis B Surface Antigen Test" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9037" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="866947cb-18da-4287-b579-15023917b6b3" />
+	<concept_name concept_id="865" name="Positive" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9037" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="966947cb-18da-4287-b579-15023917b6b3" />
+	<concept_name concept_id="866" name="Patient Type at Enrolment" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9036" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="666947cb-18da-4287-b579-15023917b6b3" />
+	<concept_name concept_id="867" name="New client" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9036" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="666947cb-18da-4287-b579-15023917b6b3" />
+	<concept_name concept_id="868" name="Hepatitis C test - qualitative" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="9037" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="876947cb-18da-4287-b579-15023917b6b3" />
+
+	<orders order_id="101" order_type_id="2" concept_id="864" orderer="1" encounter_id="15" date_activated="2025-06-26 02:16:35.0" order_reason_non_coded="122" creator="1" date_created="2025-06-28 08:29:32.0" voided="false" patient_id="15" uuid="6a202cca-da9e-411b-9e55-5b0cd29e2cb1" urgency="ROUTINE" order_number="ORD-1" order_action="NEW" care_setting="1"/>
+	<orders order_id="102" order_type_id="2" concept_id="868" orderer="1" encounter_id="15" date_activated="2025-06-26 02:16:35.0" order_reason_non_coded="122" creator="1" date_created="2025-06-28 08:29:32.0" voided="false" patient_id="15" uuid="6a202cca-da9e-411b-9e55-5b0cd29e2cb2" urgency="ROUTINE" order_number="ORD-1" order_action="NEW" care_setting="1"/>
+
+	<!--  	Patient Type at Enrolment -> New client -->
+	<obs obs_id="4002" person_id="15" concept_id="866" encounter_id="15" obs_group_id="[NULL]" obs_datetime="2025-06-26 00:00:00.0" location_id="1" value_coded="867" comments="" creator="1" date_created="2025-06-26 14:09:35.0" voided="false" value_coded_name_id="[NULL]" value_complex="[NULL]" value_text="[NULL]" value_numeric="[NULL]" value_datetime="[NULL]" value_drug="[NULL]" uuid="f13e948b-f1d7-4f99-b0df-915501f65d75" />
+
+	<!--  	Antiretroviral plan -> Start drugs -->
+	<obs obs_id="4003" person_id="15" concept_id="862" encounter_id="15" obs_group_id="[NULL]" obs_datetime="2025-06-26 00:00:00.0" location_id="1" value_coded="863" comments="" creator="1" date_created="2025-06-26 14:09:35.0" voided="false" value_coded_name_id="[NULL]" value_complex="[NULL]" value_text="[NULL]" value_numeric="[NULL]" value_datetime="[NULL]" value_drug="[NULL]" uuid="90b6abe2-eef9-4d03-aba7-5363a591cb1a" />
+	<!--  	Antiretroviral plan -> Start drugs   -->
+	<obs obs_id="4004" person_id="16" concept_id="862" encounter_id="16" obs_group_id="[NULL]" obs_datetime="2025-06-26 00:00:00.0" location_id="1" value_coded="863" comments="" creator="1" date_created="2025-06-26 14:09:35.0" voided="false" value_coded_name_id="[NULL]" value_complex="[NULL]" value_text="[NULL]" value_numeric="[NULL]" value_datetime="[NULL]" value_drug="[NULL]" uuid="530e1581-f6eb-4df2-8649-a39d2f23b9e4" />
+	<!--  	Hepatitis B Surface Antigen Test -> Positive   -->
+	<obs obs_id="4005" person_id="15" concept_id="864" order_id="101" encounter_id="15" obs_group_id="[NULL]" obs_datetime="2025-06-26 00:00:00.0" location_id="1" value_coded="865" comments="" creator="1" date_created="2025-06-26 14:09:35.0" voided="false" value_coded_name_id="[NULL]" value_complex="[NULL]" value_text="[NULL]" value_numeric="[NULL]" value_datetime="[NULL]" value_drug="[NULL]" uuid="ec7ae869-8cf5-4b98-a1ec-c62b1f88f6d9" />
+	<!--  	Hepatitis C test - qualitative -> Positive   -->
+	<obs obs_id="4006" person_id="15" concept_id="868" order_id="102" encounter_id="15" obs_group_id="[NULL]" obs_datetime="2025-06-26 00:00:00.0" location_id="1" value_coded="865" comments="" creator="1" date_created="2025-06-26 14:09:35.0" voided="false" value_coded_name_id="[NULL]" value_complex="[NULL]" value_text="[NULL]" value_numeric="[NULL]" value_datetime="[NULL]" value_drug="[NULL]" uuid="00eb901f-c07e-4112-b488-15565749ed05" />
+
+
+</dataset>
