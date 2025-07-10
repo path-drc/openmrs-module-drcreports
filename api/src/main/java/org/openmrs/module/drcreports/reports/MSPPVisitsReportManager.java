@@ -34,6 +34,7 @@ public class MSPPVisitsReportManager extends ActivatedReportManager {
 	private VisitService vs;
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override

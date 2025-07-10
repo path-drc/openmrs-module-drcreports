@@ -31,12 +31,12 @@ import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 public class DRCArtDeathReportManager extends ActivatedReportManager {
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override
 	public boolean isActivated() {
-		//return inizService.getBooleanFromKey("report.drc.active", false);
-		return true;
+		return inizService.getBooleanFromKey("report.drc.artDeathReport.active", true);
 		
 	}
 	

@@ -24,20 +24,27 @@ import org.openmrs.module.reporting.data.person.service.PersonDataService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
+@Component
 @Handler(supports = ContactInfoDataDefinition.class)
 public class ContactInfoDataEvaluator implements PatientDataEvaluator {
 	
 	@Autowired
+	@Qualifier("reportingPatientDataService")
 	private PatientDataService patientDataService;
 	
 	@Autowired
+	@Qualifier("reportingPersonDataService")
 	private PersonDataService personDataService;
 	
 	@Autowired
+	@Qualifier("patientService")
 	private PatientService patientService;
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override

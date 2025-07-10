@@ -8,25 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.text.SimpleDateFormat;
 
-import org.openmrs.Concept;
-import org.openmrs.VisitType;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.VisitService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.drcreports.ActivatedReportManager;
-import org.openmrs.module.drcreports.DRCReportsConstants;
 import org.openmrs.module.initializer.api.InitializerService;
-import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.BirthAndDeathCohortDefinition;
 
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
-import org.openmrs.module.reporting.common.RangeComparator;
-import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.DurationUnit;
 
 import org.openmrs.module.reporting.dataset.definition.CohortCrossTabDataSetDefinition;
@@ -38,21 +27,19 @@ import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition.TimeModifier;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
 
 @Component
-public class DRCArtTranferInReportManager extends ActivatedReportManager {
+public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override
 	public boolean isActivated() {
-		//return inizService.getBooleanFromKey("report.drc.active", false);
-		return true;
-		
+		return inizService.getBooleanFromKey("report.drc.artAbandonment.active", true);
 	}
 	
 	@Override
@@ -62,27 +49,23 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 	
 	@Override
 	public String getUuid() {
-		return "45c4ffdb-c4ff-4024-9d72-b6ecb0c1cac1";
+		return "b0e1e4a6-749a-4741-b13c-4f4644c9df91";
 	}
 	
 	@Override
 	public String getName() {
-		return MessageUtil.translate("drcreports.report.drc.artTranferIn.reportName");
+		return MessageUtil.translate("drcreports.report.drc.artAbandonment.reportName");
 	}
 	
 	@Override
 	public String getDescription() {
-		return MessageUtil.translate("drcreports.report.drc.artTranferIn.reportDescription");
+		return MessageUtil.translate("drcreports.report.drc.artAbandonment.reportDescription");
 	}
 	
-	private Parameter getStartDateParameter() {
-		return new Parameter("startDate", MessageUtil.translate("drcreports.report.util.startDate"), Date.class);
-	}
-	
-	private Parameter getEndDateParameter() {
+	private Parameter getReportingDateParameter() {
 		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		return new Parameter("endDate", MessageUtil.translate("drcreports.report.util.endDate"), Date.class, null,
-		        DateUtil.parseDate(today, "yyyy-MM-dd"));
+		return new Parameter("onOrBefore", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class,
+		        null, DateUtil.parseDate(today, "yyyy-MM-dd"));
 	}
 	
 	public static String col1 = "";
@@ -110,8 +93,7 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> params = new ArrayList<Parameter>();
-		params.add(getStartDateParameter());
-		params.add(getEndDateParameter());
+		params.add(getReportingDateParameter());
 		
 		return params;
 	}
@@ -124,48 +106,51 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 		
-		// artTranferIn Grouping
-		CohortCrossTabDataSetDefinition artTranferIn = new CohortCrossTabDataSetDefinition();
-		artTranferIn.addParameters(getParameters());
-		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(artTranferIn));
+		// artAbandonment Grouping
+		CohortCrossTabDataSetDefinition artAbandonment = new CohortCrossTabDataSetDefinition();
+		artAbandonment.addParameters(getParameters());
+		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(artAbandonment));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
-		parameterMappings.put("onOrAfter", "${startDate}");
-		parameterMappings.put("onOrBefore", "${endDate}");
+		parameterMappings.put("onOrBefore", "${onOrBefore}");
 		
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
-		// What you want to do? -> Transfer-In
-		// ART start date < enrollment date
-		/////// enrollment date in reporting date range
+		// ART plan -> Started drugs
+		// AND (No Visit in past 90 days AND Not transferred out in past 90 days)
+		// OR (Refused ART in past 90 days)
+		
 		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid = '160563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0) "
-		        + "AND EXISTS (SELECT 1 FROM obs date_obs JOIN concept date_concept ON date_obs.concept_id = date_concept.concept_id WHERE date_obs.person_id = p.patient_id AND date_concept.uuid = '159599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND date_obs.voided = 0 AND date_obs.obs_datetime = (SELECT MAX(do_inner.obs_datetime) FROM obs do_inner WHERE do_inner.person_id = p.patient_id AND do_inner.concept_id = date_concept.concept_id AND do_inner.voided = 0) "
-		        + "AND date_obs.value_datetime < (SELECT ref_date_obs.value_datetime FROM obs ref_date_obs JOIN concept ref_date_concept ON ref_date_obs.concept_id = ref_date_concept.concept_id WHERE ref_date_obs.person_id = p.patient_id AND ref_date_concept.uuid = '160555AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND ref_date_obs.voided = 0 AND ref_date_obs.value_datetime BETWEEN :onOrAfter AND :onOrBefore "
-		        + "AND ref_date_obs.obs_datetime = (SELECT MAX(rdo_inner.obs_datetime) FROM obs rdo_inner WHERE rdo_inner.person_id = p.patient_id AND rdo_inner.concept_id = ref_date_concept.concept_id AND rdo_inner.voided = 0 AND rdo_inner.value_datetime BETWEEN :onOrAfter AND :onOrBefore)));";
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND c_answer.uuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0) " // STARTED DRUGS
+		        + "AND ((NOT EXISTS (SELECT 1 FROM visit v WHERE v.patient_id = p.patient_id AND v.date_started BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore AND v.voided = 0) " // NO VISIT IN 90 DAYS
+		        + "AND NOT EXISTS (SELECT 1 FROM obs o_transfer JOIN concept c_transfer ON o_transfer.concept_id = c_transfer.concept_id WHERE o_transfer.person_id = p.patient_id AND c_transfer.uuid = '160649AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_transfer.voided = 0 AND o_transfer.value_datetime BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore)) " // NOT TRANSFERRED OUT
+		        + "OR EXISTS (SELECT 1 FROM obs o_refused JOIN concept c_refused ON o_refused.concept_id = c_refused.concept_id WHERE o_refused.person_id = p.patient_id AND c_refused.uuid = '162572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o_refused.voided = 0 AND o_refused.value_datetime BETWEEN DATE_SUB(:onOrBefore, INTERVAL 90 DAY) AND :onOrBefore)); "; // REFUSED ART
 		
 		sqd.setQuery(sql);
-		sqd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		sqd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
+		// Alive patients
+		BirthAndDeathCohortDefinition livePatients = new BirthAndDeathCohortDefinition();
+		livePatients.setDied(false);
+		
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-		ccd.initializeFromElements(sqd);
-		artTranferIn.addRow(getName(), ccd, parameterMappings);
+		ccd.initializeFromElements(sqd, livePatients);
+		artAbandonment.addRow(getName(), ccd, parameterMappings);
 		
 		setColumnNames();
 		
 		GenderCohortDefinition males = new GenderCohortDefinition();
 		males.setMaleIncluded(true);
-		artTranferIn.addColumn(col1, createCohortComposition(males), null);
+		artAbandonment.addColumn(col1, createCohortComposition(males), null);
 		
 		GenderCohortDefinition females = new GenderCohortDefinition();
 		females.setFemaleIncluded(true);
-		artTranferIn.addColumn(col2, createCohortComposition(females), null);
+		artAbandonment.addColumn(col2, createCohortComposition(females), null);
 		
 		GenderCohortDefinition allGenders = new GenderCohortDefinition();
 		allGenders.setFemaleIncluded(true);
 		allGenders.setMaleIncluded(true);
-		artTranferIn.addColumn(col3, createCohortComposition(allGenders), null);
+		artAbandonment.addColumn(col3, createCohortComposition(allGenders), null);
 		
 		// < 1 year
 		AgeCohortDefinition under1y = new AgeCohortDefinition();
@@ -174,7 +159,7 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col4, createCohortComposition(under1y), null);
+		artAbandonment.addColumn(col4, createCohortComposition(under1y), null);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -183,7 +168,7 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col5, createCohortComposition(_1To4y), null);
+		artAbandonment.addColumn(col5, createCohortComposition(_1To4y), null);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -192,7 +177,7 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col6, createCohortComposition(_5To9y), null);
+		artAbandonment.addColumn(col6, createCohortComposition(_5To9y), null);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -201,7 +186,7 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col7, createCohortComposition(_10To14y), null);
+		artAbandonment.addColumn(col7, createCohortComposition(_10To14y), null);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -210,7 +195,7 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col8, createCohortComposition(_15To19y), null);
+		artAbandonment.addColumn(col8, createCohortComposition(_15To19y), null);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -219,7 +204,7 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col9, createCohortComposition(_20To24y), null);
+		artAbandonment.addColumn(col9, createCohortComposition(_20To24y), null);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -228,7 +213,7 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col10, createCohortComposition(_25To49y), null);
+		artAbandonment.addColumn(col10, createCohortComposition(_25To49y), null);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -237,24 +222,24 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col11, createCohortComposition(_50andAbove), null);
+		artAbandonment.addColumn(col11, createCohortComposition(_50andAbove), null);
 		
 		return rd;
 	}
 	
 	private void setColumnNames() {
 		
-		col1 = MessageUtil.translate("drcreports.report.drc.males.label");
-		col2 = MessageUtil.translate("drcreports.report.drc.females.label");
-		col3 = MessageUtil.translate("drcreports.report.drc.allGenders.label");
-		col4 = MessageUtil.translate("drcreports.report.drc.belowOneYr.label");
-		col5 = MessageUtil.translate("drcreports.report.drc.oneToFourYrs.label");
-		col6 = MessageUtil.translate("drcreports.report.drc.fiveToNineYrs.label");
-		col7 = MessageUtil.translate("drcreports.report.drc.tenToFourteenYrs.label");
-		col8 = MessageUtil.translate("drcreports.report.drc.fifteenToNineteenYrs.label");
-		col9 = MessageUtil.translate("drcreports.report.drc.twentyToTwentyFourYrs.label");
-		col10 = MessageUtil.translate("drcreports.report.drc.twentyFiveToFourtyNineYrs.label");
-		col11 = MessageUtil.translate("drcreports.report.drc.fiftyAndAbove.label");
+		col1 = MessageUtil.translate("drcreports.report.drc.hivStage.males.label");
+		col2 = MessageUtil.translate("drcreports.report.drc.hivStage.females.label");
+		col3 = MessageUtil.translate("drcreports.report.drc.hivStage.allGenders.label");
+		col4 = MessageUtil.translate("drcreports.report.drc.hivStage.belowOneYr.label");
+		col5 = MessageUtil.translate("drcreports.report.drc.hivStage.oneToFourYrs.label");
+		col6 = MessageUtil.translate("drcreports.report.drc.hivStage.fiveToNineYrs.label");
+		col7 = MessageUtil.translate("drcreports.report.drc.hivStage.tenToFourteenYrs.label");
+		col8 = MessageUtil.translate("drcreports.report.drc.hivStage.fifteenToNineteenYrs.label");
+		col9 = MessageUtil.translate("drcreports.report.drc.hivStage.twentyToTwentyFourYrs.label");
+		col10 = MessageUtil.translate("drcreports.report.drc.hivStage.twentyFiveToFourtyNineYrs.label");
+		col11 = MessageUtil.translate("drcreports.report.drc.hivStage.fiftyAndAbove.label");
 		
 	}
 	
@@ -267,6 +252,6 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		return Arrays
-		        .asList(ReportManagerUtil.createCsvReportDesign("b95b1b84-91a8-4c1c-901f-fc84b1ad168f", reportDefinition));
+		        .asList(ReportManagerUtil.createCsvReportDesign("13cfa070-271e-48ce-a854-3ebc080c890f", reportDefinition));
 	}
 }
