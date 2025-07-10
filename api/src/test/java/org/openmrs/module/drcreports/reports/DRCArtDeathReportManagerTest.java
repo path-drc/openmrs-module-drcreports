@@ -44,7 +44,7 @@ public class DRCARTDeathReportManagerTest extends BaseModuleContextSensitiveTest
 	private ConceptService cs;
 	
 	@Autowired
-	private DRCARTDeathReportManager manager;
+	private DRCArtDeathReportManager manager;
 	
 	@Before
 	public void setup() throws Exception {

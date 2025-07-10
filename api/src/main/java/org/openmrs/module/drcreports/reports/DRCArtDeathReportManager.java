@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 
 @Component
-public class DRCARTDeathReportManager extends ActivatedReportManager {
+public class DRCArtDeathReportManager extends ActivatedReportManager {
 	
 	@Autowired
 	private InitializerService inizService;
