@@ -1,6 +1,5 @@
 package org.openmrs.module.drcreports.reports;
 
-import static org.hamcrest.CoreMatchers.is;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +14,6 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Cohort;
@@ -39,11 +37,13 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
-public class DRCARTAbandonmentReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
+public class DRCArtAbandonmentReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
 	
-	public DRCARTAbandonmentReportManagerTest() throws SQLException {
+	public DRCArtAbandonmentReportManagerTest() throws SQLException {
 		super();
 	}
 	
@@ -61,7 +61,7 @@ public class DRCARTAbandonmentReportManagerTest extends BaseModuleContextSensiti
 	private ConceptService cs;
 	
 	@Autowired
-	private DRCARTAbandonmentReportManager manager;
+	private DRCArtAbandonmentReportManager manager;
 	
 	@Override
 	public void executeDataSet(IDataSet dataset) {
@@ -88,7 +88,7 @@ public class DRCARTAbandonmentReportManagerTest extends BaseModuleContextSensiti
 	public void setUp() throws Exception {
 		updateDatabase("org/openmrs/module/drcreports/liquibase/test-liquibase.xml");
 		executeDataSet("org/openmrs/module/reporting/include/ReportTestDataset-openmrs-2.0.xml");
-		executeDataSet("org/openmrs/module/drcreports/include/DRCARTAbandonmentReportTestDataset.xml");
+		executeDataSet("org/openmrs/module/drcreports/include/DRCArtAbandonmentReportTestDataset.xml");
 		
 		String path = getClass().getClassLoader().getResource("testAppDataDir").getPath() + File.separator;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", path);
@@ -101,15 +101,14 @@ public class DRCARTAbandonmentReportManagerTest extends BaseModuleContextSensiti
 	}
 	
 	@Test
-	public void setupReport_shouldCreateExcelTemplateDesign() throws Exception {
+	public void setupReport_shouldCreateCsvDesign() throws Exception {
 		// setup
 		
 		// replay
 		ReportManagerUtil.setupReport(manager);
 		
 		// verify
-		
-		Assert.assertNotNull(rs.getReportDesignByUuid("13cfa070-271e-48ce-a854-3ebc080c890f"));
+		assertThat(rs.getReportDesignByUuid("13cfa070-271e-48ce-a854-3ebc080c890f"), is(notNullValue()));
 		
 	}
 	
