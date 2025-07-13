@@ -21,7 +21,7 @@ public class DRCReportsConstants {
 	/*
 	 * Spring components qualifiers
 	 */
-	public static final String COMPONENT_CONTEXT = MODULE_ARTIFACT_ID + ".commonReportsContext";
+	public static final String COMPONENT_CONTEXT = MODULE_ARTIFACT_ID + ".drcreportsContext";
 	
 	public static final String COMPONENT_REPORTMANAGER_OPDRECBOOK = MODULE_ARTIFACT_ID + ".outpatientRecordBook";
 	

@@ -8,25 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.text.SimpleDateFormat;
 
-import org.openmrs.Concept;
-import org.openmrs.VisitType;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.VisitService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.drcreports.ActivatedReportManager;
-import org.openmrs.module.drcreports.DRCReportsConstants;
 import org.openmrs.module.initializer.api.InitializerService;
-import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.BirthAndDeathCohortDefinition;
-
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.VisitCohortDefinition;
 import org.openmrs.module.reporting.common.MessageUtil;
-import org.openmrs.module.reporting.common.RangeComparator;
-import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.DurationUnit;
 
 import org.openmrs.module.reporting.dataset.definition.CohortCrossTabDataSetDefinition;
@@ -38,21 +25,19 @@ import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition.TimeModifier;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
 
 @Component
-public class DRCArtTranferInReportManager extends ActivatedReportManager {
+public class DRCArtTransferInReportManager extends ActivatedReportManager {
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override
 	public boolean isActivated() {
-		//return inizService.getBooleanFromKey("report.drc.active", false);
-		return true;
-		
+		return inizService.getBooleanFromKey("report.drc.artTransferIn.active", true);
 	}
 	
 	@Override
@@ -135,7 +120,7 @@ public class DRCArtTranferInReportManager extends ActivatedReportManager {
 		
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
-		// What you want to do? -> Transfer-In
+		// Patient Type at Enrolment -> Transfer-In
 		// ART start date < enrollment date
 		/////// enrollment date in reporting date range
 		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "

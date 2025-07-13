@@ -46,13 +46,12 @@ import org.openmrs.module.reporting.common.DateUtil;
 public class DRCFacilityDispensationReportManager extends ActivatedReportManager {
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override
 	public boolean isActivated() {
-		//return inizService.getBooleanFromKey("report.drc.active", false);
-		return true;
-		
+		return inizService.getBooleanFromKey("report.drc.facilityDispensation.active", true);
 	}
 	
 	@Override

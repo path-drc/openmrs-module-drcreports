@@ -16,13 +16,12 @@
 
 	<developers>
 		<developer>
-			<name>Mekom Solutions</name>
+			<name>PATH DRC</name>
 		</developer>
 	</developers>
 
 	<organization>
-		<name>Mekom Solutions</name>
-		<url>http://www.mekomsolutions.com</url>
+		<name>PATH DRC</name>
 	</organization>
 
 	<scm>
@@ -40,8 +39,8 @@
 
 	<properties>
 		<!-- override old openmrs-sdk maven parent pom properties -->
-		<javaCompilerSource>1.8</javaCompilerSource>
-		<javaCompilerTarget>1.8</javaCompilerTarget>
+		<javaCompilerSource>8</javaCompilerSource>
+		<javaCompilerTarget>8</javaCompilerTarget>
 		<openmrsPlatformVersion>2.0.0</openmrsPlatformVersion>
 		<openmrsPlatformToolsVersion>2.0.0</openmrsPlatformToolsVersion>
 		<reportingVersion>1.21.0</reportingVersion>
@@ -90,14 +89,13 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		
-		<dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
-            <version>${mysqlTestContainerVersion}</version>
-            <scope>test</scope>
-        </dependency>
 
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>mysql</artifactId>
+			<version>${mysqlTestContainerVersion}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -194,6 +192,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>openmrs-repo</id>
@@ -204,4 +203,15 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/path-drc/path-drc-emr</url>
+		</repository>
+		<snapshotRepository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/path-drc/path-drc-emr</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>

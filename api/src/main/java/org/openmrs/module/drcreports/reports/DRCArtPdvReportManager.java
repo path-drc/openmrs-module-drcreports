@@ -25,6 +25,7 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -33,13 +34,13 @@ import org.openmrs.module.reporting.common.DateUtil;
 public class DRCArtPdvReportManager extends ActivatedReportManager {
 	
 	@Autowired
+	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
 	@Override
 	public boolean isActivated() {
 		return inizService.getBooleanFromKey("report.drc.artPdvReport.active", true);
-		return true;
-		
+
 	}
 	
 	@Override
