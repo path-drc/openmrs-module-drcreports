@@ -30,7 +30,7 @@ import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
 
 @Component
-public class DRCARTPDVReportManager extends ActivatedReportManager {
+public class DRCArtPdvReportManager extends ActivatedReportManager {
 	
 	@Autowired
 	private InitializerService inizService;

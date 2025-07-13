@@ -1,6 +1,5 @@
 package org.openmrs.module.drcreports.reports;
 
-import static org.hamcrest.CoreMatchers.is;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +14,6 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Cohort;
@@ -39,11 +37,13 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
-public class DRCARTPDVReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
+public class DRCArtPdvReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
 	
-	public DRCARTPDVReportManagerTest() throws SQLException {
+	public DRCArtPdvReportManagerTest() throws SQLException {
 		super();
 	}
 	
@@ -61,7 +61,7 @@ public class DRCARTPDVReportManagerTest extends BaseModuleContextSensitiveMysqlB
 	private ConceptService cs;
 	
 	@Autowired
-	private DRCARTPDVReportManager manager;
+	private DRCArtPdvReportManager manager;
 	
 	@Override
 	public void executeDataSet(IDataSet dataset) {
@@ -88,7 +88,7 @@ public class DRCARTPDVReportManagerTest extends BaseModuleContextSensitiveMysqlB
 	public void setUp() throws Exception {
 		updateDatabase("org/openmrs/module/drcreports/liquibase/test-liquibase.xml");
 		executeDataSet("org/openmrs/module/reporting/include/ReportTestDataset-openmrs-2.0.xml");
-		executeDataSet("org/openmrs/module/drcreports/include/DRCARTPDVReportManagerTestDataset.xml");
+		executeDataSet("org/openmrs/module/drcreports/include/DRCArtPdvReportTestDataset.xml");
 		
 		String path = getClass().getClassLoader().getResource("testAppDataDir").getPath() + File.separator;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", path);
@@ -101,15 +101,14 @@ public class DRCARTPDVReportManagerTest extends BaseModuleContextSensitiveMysqlB
 	}
 	
 	@Test
-	public void setupReport_shouldCreateExcelTemplateDesign() throws Exception {
+	public void setupReport_shouldCreateCsvDesign() throws Exception {
 		// setup
 		
 		// replay
 		ReportManagerUtil.setupReport(manager);
 		
 		// verify
-		
-		Assert.assertNotNull(rs.getReportDesignByUuid("1e7aefa6-af43-4f8f-996f-e727dba483ce"));
+		assertThat(rs.getReportDesignByUuid("1e7aefa6-af43-4f8f-996f-e727dba483ce"), is(notNullValue()));
 		
 	}
 	
