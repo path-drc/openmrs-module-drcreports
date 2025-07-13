@@ -1,6 +1,5 @@
 package org.openmrs.module.drcreports.reports;
 
-import static org.hamcrest.CoreMatchers.is;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +14,6 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Cohort;
@@ -39,11 +37,13 @@ import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
-public class DRCARTFirstLineBelowFifteenYearsReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
+public class DRCArtFirstLineBelowFifteenYearsReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
 	
-	public DRCARTFirstLineBelowFifteenYearsReportManagerTest() throws SQLException {
+	public DRCArtFirstLineBelowFifteenYearsReportManagerTest() throws SQLException {
 		super();
 	}
 	
@@ -61,7 +61,7 @@ public class DRCARTFirstLineBelowFifteenYearsReportManagerTest extends BaseModul
 	private ConceptService cs;
 	
 	@Autowired
-	private DRCARTFirstLineBelowFifteenYearsReportManager manager;
+	private DRCArtFirstLineBelowFifteenYearsReportManager manager;
 	
 	@Override
 	public void executeDataSet(IDataSet dataset) {
@@ -88,7 +88,7 @@ public class DRCARTFirstLineBelowFifteenYearsReportManagerTest extends BaseModul
 	public void setUp() throws Exception {
 		updateDatabase("org/openmrs/module/drcreports/liquibase/test-liquibase.xml");
 		executeDataSet("org/openmrs/module/reporting/include/ReportTestDataset-openmrs-2.0.xml");
-		executeDataSet("org/openmrs/module/drcreports/include/DRCARTFirstLineBelowFifteenYearsReportTestDataset.xml");
+		executeDataSet("org/openmrs/module/drcreports/include/DRCArtFirstLineBelowFifteenYearsReportTestDataset.xml");
 		
 		String path = getClass().getClassLoader().getResource("testAppDataDir").getPath() + File.separator;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", path);
@@ -101,16 +101,14 @@ public class DRCARTFirstLineBelowFifteenYearsReportManagerTest extends BaseModul
 	}
 	
 	@Test
-	public void setupReport_shouldCreateExcelTemplateDesign() throws Exception {
+	public void setupReport_shouldCreateCsvDesign() throws Exception {
 		// setup
 		
 		// replay
 		ReportManagerUtil.setupReport(manager);
 		
 		// verify
-		
-		Assert.assertNotNull(rs.getReportDesignByUuid("a38b4f6f-cf0f-45fc-bba0-edf9761417db"));
-		
+		assertThat(rs.getReportDesignByUuid("a38b4f6f-cf0f-45fc-bba0-edf9761417db"), is(notNullValue()));
 	}
 	
 	@Test

@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Component
 public class DRCArtFirstLineBelowFifteenYearsReportManager extends ActivatedReportManager {
