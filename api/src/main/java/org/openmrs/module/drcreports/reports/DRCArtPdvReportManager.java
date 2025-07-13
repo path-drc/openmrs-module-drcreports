@@ -37,7 +37,7 @@ public class DRCArtPdvReportManager extends ActivatedReportManager {
 	
 	@Override
 	public boolean isActivated() {
-		//return inizService.getBooleanFromKey("report.drc.active", false);
+		return inizService.getBooleanFromKey("report.drc.artPdvReport.active", true);
 		return true;
 		
 	}
