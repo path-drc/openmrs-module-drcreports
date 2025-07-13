@@ -41,9 +41,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class DRCFacilityBasedARTDeliveryReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
+public class DRCFacilityBasedArtDeliveryReportManagerTest extends BaseModuleContextSensitiveMysqlBackedTest {
 	
-	public DRCFacilityBasedARTDeliveryReportManagerTest() throws SQLException {
+	public DRCFacilityBasedArtDeliveryReportManagerTest() throws SQLException {
 		super();
 	}
 	
