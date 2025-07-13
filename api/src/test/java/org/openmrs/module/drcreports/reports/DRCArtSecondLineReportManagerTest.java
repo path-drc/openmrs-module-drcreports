@@ -88,7 +88,7 @@ public class DRCArtSecondLineReportManagerTest extends BaseModuleContextSensitiv
 	public void setUp() throws Exception {
 		updateDatabase("org/openmrs/module/drcreports/liquibase/test-liquibase.xml");
 		executeDataSet("org/openmrs/module/reporting/include/ReportTestDataset-openmrs-2.0.xml");
-		executeDataSet("org/openmrs/module/drcreports/include/DRCARTSecondLineReportTestDataset.xml");
+		executeDataSet("org/openmrs/module/drcreports/include/DRCArtSecondLineReportTestDataset.xml");
 		
 		String path = getClass().getClassLoader().getResource("testAppDataDir").getPath() + File.separator;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", path);

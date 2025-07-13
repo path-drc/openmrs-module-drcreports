@@ -61,7 +61,7 @@ public class DRCArtTransferInReportManagerTest extends BaseModuleContextSensitiv
 	}
 	
 	@Test
-	public void setupReport_shouldSetupDRCARTTransferOutReport() {
+	public void setupReport_shouldSetupDRCArtTransferOutReport() {
 		
 		// replay
 		ReportManagerUtil.setupReport(manager);
