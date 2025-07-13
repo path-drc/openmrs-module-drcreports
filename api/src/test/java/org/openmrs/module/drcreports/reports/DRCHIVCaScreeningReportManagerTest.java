@@ -61,7 +61,7 @@ public class DRCHivCaScreeningReportManagerTest extends BaseModuleContextSensiti
 	}
 	
 	@Test
-	public void setupReport_shouldSetupDRCArtTransferOutReport() {
+	public void setupReport_shouldSetupDRCHivCaScreeningReport() {
 		
 		// replay
 		ReportManagerUtil.setupReport(manager);

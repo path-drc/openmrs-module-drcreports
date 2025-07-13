@@ -101,7 +101,7 @@ public class DRCArtSecondLineReportManagerTest extends BaseModuleContextSensitiv
 	}
 	
 	@Test
-	public void setupReport_shouldCreateExcelTemplateDesign() throws Exception {
+	public void setupReport_shouldCreateCsvDesign() throws Exception {
 		// setup
 		
 		// replay

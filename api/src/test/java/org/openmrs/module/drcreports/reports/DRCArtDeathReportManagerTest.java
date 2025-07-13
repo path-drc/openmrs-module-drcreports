@@ -62,7 +62,7 @@ public class DRCArtDeathReportManagerTest extends BaseModuleContextSensitiveTest
 	}
 	
 	@Test
-	public void setupReport_shouldSetupDRCArtTransferOutReport() {
+	public void setupReport_shouldSetupDRCArtDeathReportReport() {
 		
 		// replay
 		ReportManagerUtil.setupReport(manager);
