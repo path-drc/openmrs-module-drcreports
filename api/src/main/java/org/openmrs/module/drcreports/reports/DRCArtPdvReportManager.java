@@ -39,7 +39,8 @@ public class DRCArtPdvReportManager extends ActivatedReportManager {
 	
 	@Override
 	public boolean isActivated() {
-		return inizService.getBooleanFromKey("report.drc.artPdv.active", true);
+		return inizService.getBooleanFromKey("report.drc.artPdvReport.active", true);
+
 	}
 	
 	@Override
@@ -64,8 +65,8 @@ public class DRCArtPdvReportManager extends ActivatedReportManager {
 	
 	private Parameter getReportingDateParameter() {
 		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		return new Parameter("onOrBefore", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class,
-		        null, DateUtil.parseDate(today, "yyyy-MM-dd"));
+		return new Parameter("endDate", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class, null,
+		        DateUtil.parseDate(today, "yyyy-MM-dd"));
 	}
 	
 	public static String col1 = "";
@@ -112,7 +113,7 @@ public class DRCArtPdvReportManager extends ActivatedReportManager {
 		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(artPDV));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
-		parameterMappings.put("onOrBefore", "${onOrBefore}");
+		parameterMappings.put("onOrBefore", "${endDate}");
 		
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
