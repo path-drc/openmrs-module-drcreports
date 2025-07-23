@@ -152,6 +152,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id "
 		        + "JOIN concept c_answer ON o.value_coded = c_answer.concept_id JOIN obs o2 ON o.person_id = o2.person_id AND o.obs_datetime = o2.obs_datetime WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid = '164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o2.concept_id = (SELECT concept_id FROM concept WHERE uuid = '160555AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') AND o2.value_datetime <= :onOrAfter AND o.voided = 0 AND o2.voided = 0);";
 		newlyIdentifiedPtLivingWithHIVsqd.setQuery(newlyIdentifiedPtLivingWithHIVsql);
+		newlyIdentifiedPtLivingWithHIVsqd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		
 		//TB Screening
 		CodedObsCohortDefinition tBScreening = new CodedObsCohortDefinition();
