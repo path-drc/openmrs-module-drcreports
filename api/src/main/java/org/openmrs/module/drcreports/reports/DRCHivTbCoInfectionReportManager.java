@@ -146,16 +146,13 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		
 		ConceptService cs = Context.getConceptService();
 		
-		// Newly Enrolled HIV Pt
-		CodedObsCohortDefinition newHIVEnrollment = new CodedObsCohortDefinition();
-		newHIVEnrollment.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
-		newHIVEnrollment.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
-		newHIVEnrollment.setOperator(SetComparator.IN);
-		newHIVEnrollment.setQuestion(cs.getConceptByUuid("83e40f2c-c316-43e6-a12e-20a338100281")); //What do you want to do?
-		newHIVEnrollment.setTimeModifier(TimeModifier.LAST);
-		List<Concept> newHIVEnrollmentAnswers = new ArrayList<Concept>();
-		newHIVEnrollmentAnswers.add(cs.getConceptByUuid("164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Enroll new Pt in HIV Care
-		newHIVEnrollment.setValueList(newHIVEnrollmentAnswers);
+		SqlCohortDefinition newlyIdentifiedPtLivingWithHIVsqd = new SqlCohortDefinition();
+		//What do you want to do? ---> Enroll new Pt in HIV Care & date of enrollment is <=30 days 
+		String newlyIdentifiedPtLivingWithHIVsql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id "
+		        + "JOIN concept c_answer ON o.value_coded = c_answer.concept_id JOIN obs o2 ON o.person_id = o2.person_id AND o.obs_datetime = o2.obs_datetime WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid = '164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o2.concept_id = (SELECT concept_id FROM concept WHERE uuid = '160555AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') AND o2.value_datetime <= :onOrAfter AND o.voided = 0 AND o2.voided = 0);";
+		newlyIdentifiedPtLivingWithHIVsqd.setQuery(newlyIdentifiedPtLivingWithHIVsql);
+		newlyIdentifiedPtLivingWithHIVsqd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		
 		//TB Screening
 		CodedObsCohortDefinition tBScreening = new CodedObsCohortDefinition();
@@ -173,13 +170,13 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		livePatients.setDied(false);
 		
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-		ccd.initializeFromElements(visits, newHIVEnrollment, tBScreening, livePatients);
+		ccd.initializeFromElements(visits, newlyIdentifiedPtLivingWithHIVsqd, tBScreening, livePatients);
 		// Presumptive TB signs
 		CodedObsCohortDefinition presumptiveTBSigns = new CodedObsCohortDefinition();
 		presumptiveTBSigns.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		presumptiveTBSigns.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		presumptiveTBSigns.setOperator(SetComparator.IN);
-		presumptiveTBSigns.setQuestion(cs.getConceptByUuid("12a22a0b-f0ed-4f1a-8d70-7c6acda5ae78")); //What do you want to do?
+		presumptiveTBSigns.setQuestion(cs.getConceptByUuid("12a22a0b-f0ed-4f1a-8d70-7c6acda5ae78")); //TB Signs/Symptoms
 		presumptiveTBSigns.setTimeModifier(TimeModifier.LAST);
 		List<Concept> presumptiveTBSignsAnswers = new ArrayList<Concept>();
 		
@@ -191,14 +188,13 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		presumptiveTBSigns.setValueList(presumptiveTBSignsAnswers);
 		
 		CompositionCohortDefinition ccd2 = new CompositionCohortDefinition();
-		ccd2.initializeFromElements(visits, presumptiveTBSigns, livePatients);
+		ccd2.initializeFromElements(visits, newlyIdentifiedPtLivingWithHIVsqd, presumptiveTBSigns, livePatients);
 		
 		SqlCohortDefinition ptLivingWithHIVsqd = new SqlCohortDefinition();
-		
-		//What do you want to do? ---> Enroll new Pt in HIV Care
-		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid = '164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0);";
-		ptLivingWithHIVsqd.setQuery(sql);
+		//What do you want to do? ---> Enrol a new client, Transfer in a client, Enrol a Mother into PMTCT program, Re-enrol a client
+		String ptLivingWithHIVsql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid IN ('164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','160563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','163532AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','159833AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') AND o.voided = 0);";
+		ptLivingWithHIVsqd.setQuery(ptLivingWithHIVsql);
 		
 		//Action taken - Presumptive TB ----> GeneXpert MTB/Rif Ordered
 		CodedObsCohortDefinition tBTestDoneGeneExpert = new CodedObsCohortDefinition();
@@ -252,6 +248,17 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		evalTBProphylaxisAnswer.add(cs.getConceptByUuid("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Yes
 		evalTBProphylaxis.setValueList(evalTBProphylaxisAnswer);
 		
+		//Negative TB Screening
+		CodedObsCohortDefinition negativeTBScreening = new CodedObsCohortDefinition();
+		negativeTBScreening.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		negativeTBScreening.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
+		negativeTBScreening.setOperator(SetComparator.IN);
+		negativeTBScreening.setQuestion(cs.getConceptByUuid("160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); //TB screening outcome
+		negativeTBScreening.setTimeModifier(TimeModifier.LAST);
+		List<Concept> negativeTBScreeningAnswer = new ArrayList<Concept>();
+		negativeTBScreeningAnswer.add(cs.getConceptByUuid("664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); //Negative
+		negativeTBScreening.setValueList(negativeTBScreeningAnswer);
+		
 		//Date tuberculosis prophylaxis started
 		DateObsCohortDefinition tbProphylaxisDate = new DateObsCohortDefinition();
 		tbProphylaxisDate.setTimeModifier(TimeModifier.LAST);
@@ -259,7 +266,8 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		tbProphylaxisDate.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
 		tbProphylaxisDate.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
 		CompositionCohortDefinition ccd6 = new CompositionCohortDefinition();
-		ccd6.initializeFromElements(newHIVEnrollment, evalTBProphylaxis, tbProphylaxisDate, livePatients);
+		ccd6.initializeFromElements(newlyIdentifiedPtLivingWithHIVsqd, evalTBProphylaxis, negativeTBScreening,
+		    tbProphylaxisDate, livePatients);
 		
 		//Completed TB Prophylaxis
 		CodedObsCohortDefinition completedTBProphylaxis = new CodedObsCohortDefinition();
