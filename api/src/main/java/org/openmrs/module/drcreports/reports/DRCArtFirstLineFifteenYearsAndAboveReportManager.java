@@ -161,7 +161,7 @@ public class DRCArtFirstLineFifteenYearsAndAboveReportManager extends ActivatedR
 		CompositionCohortDefinition ccd3 = new CompositionCohortDefinition();
 		ccd3.initializeFromElements(sqd3, livePatients);
 		
-		artFirstLineFifteenYearsAndAbove.addRow(MessageUtil.translate("drcreports.report.drc.ABC+3TC+pDTG"), ccd,
+		artFirstLineFifteenYearsAndAbove.addRow(MessageUtil.translate("drcreports.report.drc.ABC+3TC+DTG"), ccd,
 		    parameterMappings);
 		
 		setColumnNames();
