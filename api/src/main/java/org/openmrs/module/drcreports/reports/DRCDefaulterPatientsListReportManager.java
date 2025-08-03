@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.text.SimpleDateFormat;
 import org.openmrs.module.drcreports.ActivatedReportManager;
 import org.openmrs.module.initializer.api.InitializerService;
 import org.openmrs.module.reporting.common.MessageUtil;
@@ -20,9 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
+import org.openmrs.module.reporting.common.DateUtil;
 
 @Component
-public class DRCPatientsMasterListReportManager extends ActivatedReportManager {
+public class DRCDefaulterPatientsListReportManager extends ActivatedReportManager {
 	
 	@Autowired
 	@Qualifier("initializer.InitializerService")
@@ -30,7 +32,7 @@ public class DRCPatientsMasterListReportManager extends ActivatedReportManager {
 	
 	@Override
 	public boolean isActivated() {
-		return inizService.getBooleanFromKey("report.drc.master.patients.active", true);
+		return inizService.getBooleanFromKey("report.drc.defaulter.patients.active", true);
 	}
 	
 	@Override
@@ -40,22 +42,29 @@ public class DRCPatientsMasterListReportManager extends ActivatedReportManager {
 	
 	@Override
 	public String getUuid() {
-		return "d03ee99a-b379-47b9-b588-1bde82bdef91";
+		return "641299f1-29d3-4459-a828-036c0f962643";
 	}
 	
 	@Override
 	public String getName() {
-		return MessageUtil.translate("drcreports.report.drc.master.patients.reportName");
+		return MessageUtil.translate("drcreports.report.drc.defaulter.patients.reportName");
 	}
 	
 	@Override
 	public String getDescription() {
-		return MessageUtil.translate("drcreports.report.drc.master.patients.reportDescription");
+		return MessageUtil.translate("drcreports.report.drc.defaulter.patients.reportDescription");
+	}
+	
+	private Parameter getReportingDateParameter() {
+		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+		return new Parameter("onOrBefore", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class,
+		        null, DateUtil.parseDate(today, "yyyy-MM-dd"));
 	}
 	
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> params = new ArrayList<Parameter>();
+		params.add(getReportingDateParameter());
 		return params;
 	}
 	
@@ -70,13 +79,13 @@ public class DRCPatientsMasterListReportManager extends ActivatedReportManager {
 		rd.setUuid(getUuid());
 		
 		SqlDataSetDefinition sqlDsd = new SqlDataSetDefinition();
-		sqlDsd.setName(MessageUtil.translate("drcreports.report.drc.master.patients.datasetName"));
-		sqlDsd.setDescription(MessageUtil.translate("drcreports.report.drc.master.patients.datasetDescription"));
+		sqlDsd.setName(MessageUtil.translate("drcreports.report.drc.defaulter.patients.datasetName"));
+		sqlDsd.setDescription(MessageUtil.translate("drcreports.report.drc.defaulter.patients.datasetDescription"));
 		
-		String sql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCEnrollment.sql");
+		String sql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCMissedAppointments.sql");
 		
 		sqlDsd.setSqlQuery(sql);
-		sqlDsd.addParameters(getParameters());
+		sqlDsd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
 		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(sqlDsd));
 		
@@ -86,7 +95,7 @@ public class DRCPatientsMasterListReportManager extends ActivatedReportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		return Arrays
-		        .asList(ReportManagerUtil.createCsvReportDesign("b5432985-43e2-4b22-9146-cc7cb1d16cac", reportDefinition));
+		        .asList(ReportManagerUtil.createCsvReportDesign("14aafb13-4736-4eec-ae6a-6da5827c1433", reportDefinition));
 	}
 	
 }
