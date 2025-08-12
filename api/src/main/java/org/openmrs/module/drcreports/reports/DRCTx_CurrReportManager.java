@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.PresenceOrAbsenceCohortDefinition;
+import org.openmrs.module.reporting.common.BooleanOperator;
 
 @Component
 public class DRCTx_CurrReportManager extends ActivatedReportManager {
@@ -164,52 +165,89 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		parameterMappings.put("onOrAfter", "${startDate}");
 		parameterMappings.put("onOrBefore", "${endDate}");
 		
-		ConceptService cs = Context.getConceptService();
+		//ConceptService cs = Context.getConceptService();
 		
 		// ART Initiated in date range
-		CodedObsCohortDefinition artInitiation = new CodedObsCohortDefinition();
-		artInitiation.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
-		artInitiation.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
-		artInitiation.setOperator(SetComparator.IN);
-		artInitiation.setQuestion(cs.getConceptByUuid("1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Art Initiation during this visit
-		artInitiation.setTimeModifier(TimeModifier.LAST);
-		List<Concept> artInitiationAnswers = new ArrayList<Concept>();
-		artInitiationAnswers.add(cs.getConceptByUuid("1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Start ART
-		artInitiationAnswers.add(cs.getConceptByUuid("162904AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Restart ART
-		artInitiation.setValueList(artInitiationAnswers);
+		SqlCohortDefinition artInitiationSqlCD = new SqlCohortDefinition();
+		String artInitiationSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurrInitiation.sql");
+		artInitiationSqlCD.setQuery(artInitiationSql);
+		artInitiationSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		artInitiationSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
+		
+		// Resume ART in date range
+		SqlCohortDefinition resumeARTSqlCD = new SqlCohortDefinition();
+		String resumeARTSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurrResumeART.sql");
+		resumeARTSqlCD.setQuery(resumeARTSql);
+		resumeARTSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		resumeARTSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
 		// Transfer In and PMTCT enrollment in date range
-		CodedObsCohortDefinition transferInPMTCT = new CodedObsCohortDefinition();
-		transferInPMTCT.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
-		transferInPMTCT.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
-		transferInPMTCT.setOperator(SetComparator.IN);
-		transferInPMTCT.setQuestion(cs.getConceptByUuid("83e40f2c-c316-43e6-a12e-20a338100281")); // What do you want to do?
-		transferInPMTCT.setTimeModifier(TimeModifier.LAST);
-		List<Concept> transferInPMTCTAnswers = new ArrayList<Concept>();
-		transferInPMTCTAnswers.add(cs.getConceptByUuid("160563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Transfer in
-		transferInPMTCTAnswers.add(cs.getConceptByUuid("163532AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Enroll into PMTCT
-		transferInPMTCT.setValueList(transferInPMTCTAnswers);
+		SqlCohortDefinition transferInPMTCTSqlCD = new SqlCohortDefinition();
+		String transferInPMTCTSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurrTransferPMTCT.sql");
+		transferInPMTCTSqlCD.setQuery(transferInPMTCTSql);
+		transferInPMTCTSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		transferInPMTCTSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
-		SqlCohortDefinition sqlDsd = new SqlCohortDefinition();
-		String sql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurr.sql");
-		sqlDsd.setQuery(sql);
-		sqlDsd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
-		sqlDsd.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
+		SqlCohortDefinition multiMonthSqlCD = new SqlCohortDefinition();
+		String multiMonthSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurrMultiMonth.sql");
+		multiMonthSqlCD.setQuery(multiMonthSql);
+		multiMonthSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		multiMonthSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
-		PresenceOrAbsenceCohortDefinition atleastInArtInitiationTransferInPMTCTSql = new PresenceOrAbsenceCohortDefinition();
-		atleastInArtInitiationTransferInPMTCTSql.addCohortToCheck(Mapped.mapStraightThrough(artInitiation));
-		atleastInArtInitiationTransferInPMTCTSql.addCohortToCheck(Mapped.mapStraightThrough(transferInPMTCT));
-		atleastInArtInitiationTransferInPMTCTSql.addCohortToCheck(Mapped.mapStraightThrough(sqlDsd));
-		atleastInArtInitiationTransferInPMTCTSql.setPresentInAtLeast(1);
-		CompositionCohortDefinition sqlDsdComposition = createCohortComposition(atleastInArtInitiationTransferInPMTCTSql);
-		
-		// alive
+		// Not dead according to death attribute 
 		BirthAndDeathCohortDefinition alive = new BirthAndDeathCohortDefinition();
 		alive.setDied(false);
+		//Not dead according to death form
+		SqlCohortDefinition liveSqlCD = new SqlCohortDefinition();
+		String liveSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCLivePatients.sql");
+		liveSqlCD.setQuery(liveSql);
+		
+		// Not stopped ART in date range
+		SqlCohortDefinition notStoppedARTSqlCD = new SqlCohortDefinition();
+		String notStoppedARTSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurrNotStopedART.sql");
+		notStoppedARTSqlCD.setQuery(notStoppedARTSql);
+		notStoppedARTSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		notStoppedARTSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
+		
+		// Not Transferred out in date range
+		SqlCohortDefinition notTransferredOutSqlCD = new SqlCohortDefinition();
+		String notTransferredOutSql = getStringFromResource(
+		    "org/openmrs/module/drcreports/sql/DRCTxCurrNotTransferredOut.sql");
+		notTransferredOutSqlCD.setQuery(notTransferredOutSql);
+		notTransferredOutSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		notTransferredOutSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-		ccd.initializeFromElements(sqlDsdComposition, alive);
-		txCurr.addRow(getName(), ccd, null);
+		// Composition for the OR condition (artInitiation OR resumeARTSqlCD OR transferInPMTCT OR multiMonth)
+		CompositionCohortDefinition atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD = new CompositionCohortDefinition();
+		atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD.initializeFromQueries(BooleanOperator.OR, artInitiationSqlCD,
+		    resumeARTSqlCD, transferInPMTCTSqlCD, multiMonthSqlCD);
+		// OR condition with the AND conditions (alive AND live)
+		ccd.initializeFromElements(atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD, alive, liveSqlCD,
+		    notStoppedARTSqlCD, notTransferredOutSqlCD);
+		
+		CompositionCohortDefinition ccd1 = new CompositionCohortDefinition();
+		ccd1.initializeFromElements(artInitiationSqlCD, alive, liveSqlCD);
+		
+		CompositionCohortDefinition ccd2 = new CompositionCohortDefinition();
+		ccd2.initializeFromElements(transferInPMTCTSqlCD, alive, liveSqlCD);
+		
+		CompositionCohortDefinition ccd3 = new CompositionCohortDefinition();
+		ccd3.initializeFromElements(multiMonthSqlCD, alive, liveSqlCD);
+		
+		CompositionCohortDefinition ccd4 = new CompositionCohortDefinition();
+		ccd4.initializeFromElements(liveSqlCD, alive, liveSqlCD);
+		
+		CompositionCohortDefinition ccd5 = new CompositionCohortDefinition();
+		ccd5.initializeFromElements(resumeARTSqlCD, alive, liveSqlCD);
+		
+		txCurr.addRow(getName(), ccd, parameterMappings);
+		txCurr.addRow("Art Init", ccd1, parameterMappings);
+		txCurr.addRow("Transfer In", ccd2, parameterMappings);
+		txCurr.addRow("Multimonth", ccd3, parameterMappings);
+		txCurr.addRow("Resume ART", ccd5, parameterMappings);
+		
+		txCurr.addRow("live", ccd4, null);
 		
 		setColumnNames();
 		
@@ -222,6 +260,7 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		GenderCohortDefinition allGenders = new GenderCohortDefinition();
 		allGenders.setFemaleIncluded(true);
 		allGenders.setMaleIncluded(true);
+		
 		txCurr.addColumn(col0, createCohortComposition(allGenders), null);
 		
 		// < 1 year
