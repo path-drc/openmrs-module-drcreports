@@ -188,6 +188,7 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		transferInPMTCTSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		transferInPMTCTSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
+		// Patients with drugs spaning <=3months with appt dates
 		SqlCohortDefinition multiMonthSqlCD = new SqlCohortDefinition();
 		String multiMonthSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurrMultiMonth.sql");
 		multiMonthSqlCD.setQuery(multiMonthSql);
@@ -222,7 +223,7 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		CompositionCohortDefinition atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD = new CompositionCohortDefinition();
 		atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD.initializeFromQueries(BooleanOperator.OR, artInitiationSqlCD,
 		    resumeARTSqlCD, transferInPMTCTSqlCD, multiMonthSqlCD);
-		// OR condition with the AND conditions (alive AND live)
+		// OR condition with the AND conditions (alive AND live AND Not stopped art AND Not Transferred Out)
 		ccd.initializeFromElements(atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD, alive, liveSqlCD,
 		    notStoppedARTSqlCD, notTransferredOutSqlCD);
 		
@@ -242,10 +243,10 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		ccd5.initializeFromElements(resumeARTSqlCD, alive, liveSqlCD);
 		
 		txCurr.addRow(getName(), ccd, parameterMappings);
-		txCurr.addRow("Art Init", ccd1, parameterMappings);
-		txCurr.addRow("Transfer In", ccd2, parameterMappings);
+		txCurr.addRow("Art Initiation", ccd1, parameterMappings);
+		txCurr.addRow("Transfer In and PMTCT", ccd2, parameterMappings);
 		txCurr.addRow("Multimonth", ccd3, parameterMappings);
-		txCurr.addRow("Resume ART", ccd5, parameterMappings);
+		txCurr.addRow("Resumed ART", ccd5, parameterMappings);
 		
 		txCurr.addRow("live", ccd4, null);
 		
