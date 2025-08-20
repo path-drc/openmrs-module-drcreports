@@ -2,18 +2,17 @@ package org.openmrs.module.drcreports.reports;
 
 import static org.openmrs.module.drcreports.common.Helper.getStringFromResource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.openmrs.Concept;
+import org.openmrs.Program;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition.TimeModifier;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.api.ConceptService;
+import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
+import org.openmrs.api.ProgramWorkflowService;
 
 import org.openmrs.module.drcreports.ActivatedReportManager;
 import org.openmrs.module.initializer.api.InitializerService;
@@ -140,6 +139,14 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 	
 	public static String col30 = "";
 	
+	public static String col31 = "";
+	
+	public static String col32 = "";
+	
+	public static String col33 = "";
+	
+	public static String col34 = "";
+	
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> params = new ArrayList<Parameter>();
@@ -165,7 +172,11 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		parameterMappings.put("onOrAfter", "${startDate}");
 		parameterMappings.put("onOrBefore", "${endDate}");
 		
-		//ConceptService cs = Context.getConceptService();
+		// HIV Care Program cohort
+		ProgramEnrollmentCohortDefinition pecd = new ProgramEnrollmentCohortDefinition();
+		ProgramWorkflowService ps = Context.getProgramWorkflowService();
+		Program program = ps.getProgramByUuid("64f950e6-1b07-4ac0-8e7e-f3e148f3463f"); //HIV Care program
+		pecd.setPrograms(Collections.singletonList(program));
 		
 		// ART Initiated in date range
 		SqlCohortDefinition artInitiationSqlCD = new SqlCohortDefinition();
@@ -218,6 +229,24 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		notTransferredOutSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		notTransferredOutSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
+		// Lessthan 3 months ART Dispensation
+		SqlCohortDefinition belowThreeMonthsDispensingSqlCD = new SqlCohortDefinition();
+		String belowThreeMonthsDispensingSql = getStringFromResource(
+		    "org/openmrs/module/drcreports/sql/DRCArtLessthanThreeMonthsDispense.sql");
+		belowThreeMonthsDispensingSqlCD.setQuery(belowThreeMonthsDispensingSql);
+		
+		// 3-5 months ART Dispensation
+		SqlCohortDefinition threeToFiveMonthsDispensingSqlCD = new SqlCohortDefinition();
+		String threeToFiveMonthsDispensingSql = getStringFromResource(
+		    "org/openmrs/module/drcreports/sql/DRCArtThreeToFiveMonthsDispense.sql");
+		threeToFiveMonthsDispensingSqlCD.setQuery(threeToFiveMonthsDispensingSql);
+		
+		// 6 months and Above ART Dispensation
+		SqlCohortDefinition sixMonthsAndAboveDispensingSqlCD = new SqlCohortDefinition();
+		String sixMonthsAndAboveDispensingSql = getStringFromResource(
+		    "org/openmrs/module/drcreports/sql/DRCArtSixAndAboveMonthsDispense.sql");
+		sixMonthsAndAboveDispensingSqlCD.setQuery(sixMonthsAndAboveDispensingSql);
+		
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
 		// Composition for the OR condition (artInitiation OR resumeARTSqlCD OR transferInPMTCT OR multiMonth)
 		CompositionCohortDefinition atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD = new CompositionCohortDefinition();
@@ -225,7 +254,16 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		    resumeARTSqlCD, transferInPMTCTSqlCD, multiMonthSqlCD);
 		// OR condition with the AND conditions (alive AND live AND Not stopped art AND Not Transferred Out)
 		ccd.initializeFromElements(atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD, alive, liveSqlCD,
-		    notStoppedARTSqlCD, notTransferredOutSqlCD);
+		    notStoppedARTSqlCD, notTransferredOutSqlCD, pecd);
+		
+		CompositionCohortDefinition lessThanThreeMonthsccd = new CompositionCohortDefinition();
+		lessThanThreeMonthsccd.initializeFromElements(ccd, belowThreeMonthsDispensingSqlCD);
+		
+		CompositionCohortDefinition threeToFiveMonthsccd = new CompositionCohortDefinition();
+		threeToFiveMonthsccd.initializeFromElements(ccd, threeToFiveMonthsDispensingSqlCD);
+		
+		CompositionCohortDefinition sixAndAboveMonthsccd = new CompositionCohortDefinition();
+		sixAndAboveMonthsccd.initializeFromElements(ccd, sixMonthsAndAboveDispensingSqlCD);
 		
 		CompositionCohortDefinition ccd1 = new CompositionCohortDefinition();
 		ccd1.initializeFromElements(artInitiationSqlCD, alive, liveSqlCD);
@@ -243,12 +281,12 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		ccd5.initializeFromElements(resumeARTSqlCD, alive, liveSqlCD);
 		
 		txCurr.addRow(getName(), ccd, parameterMappings);
-		txCurr.addRow("Art Initiation", ccd1, parameterMappings);
-		txCurr.addRow("Transfer In and PMTCT", ccd2, parameterMappings);
-		txCurr.addRow("Multimonth", ccd3, parameterMappings);
-		txCurr.addRow("Resumed ART", ccd5, parameterMappings);
-		
-		txCurr.addRow("live", ccd4, null);
+		txCurr.addRow(MessageUtil.translate("drcreports.report.drc.threeMonthsDrugsGiven.label"), lessThanThreeMonthsccd,
+		    parameterMappings);
+		txCurr.addRow(MessageUtil.translate("drcreports.report.drc.threeToFiveMonthsDrugsGiven.label"), threeToFiveMonthsccd,
+		    parameterMappings);
+		txCurr.addRow(MessageUtil.translate("drcreports.report.drc.sixPlusMonthsDrugsGiven.label"), sixAndAboveMonthsccd,
+		    parameterMappings);
 		
 		setColumnNames();
 		
@@ -414,6 +452,26 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		txCurr.addColumn(col29, createCohortComposition(_66To69y, males), null);
 		txCurr.addColumn(col30, createCohortComposition(_66To69y, females), null);
 		
+		// <15 years
+		AgeCohortDefinition below15y = new AgeCohortDefinition();
+		below15y.setMinAge(0);
+		below15y.setMinAgeUnit(DurationUnit.DAYS);
+		below15y.setMaxAge(14);
+		below15y.setMaxAgeUnit(DurationUnit.YEARS);
+		below15y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+		txCurr.addColumn(col31, createCohortComposition(below15y, males), null);
+		txCurr.addColumn(col32, createCohortComposition(below15y, females), null);
+		
+		// 15+ years
+		AgeCohortDefinition above15y = new AgeCohortDefinition();
+		above15y.setMinAge(15);
+		above15y.setMinAgeUnit(DurationUnit.YEARS);
+		above15y.setMaxAge(200);
+		above15y.setMaxAgeUnit(DurationUnit.YEARS);
+		above15y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+		txCurr.addColumn(col33, createCohortComposition(above15y, males), null);
+		txCurr.addColumn(col34, createCohortComposition(above15y, females), null);
+		
 		return rd;
 	}
 	
@@ -454,6 +512,11 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		col28 = MessageUtil.translate("drcreports.report.drc.sixtyToSixtyFourYrsFemales.label");
 		col29 = MessageUtil.translate("drcreports.report.drc.sixtyFiveAndAboveMales.label");
 		col30 = MessageUtil.translate("drcreports.report.drc.sixtyFiveAndAboveFemales.label");
+		
+		col31 = MessageUtil.translate("drcreports.report.drc.belowFifteenYrsMales.label");
+		col32 = MessageUtil.translate("drcreports.report.drc.belowFifteenYrsFemales.label");
+		col33 = MessageUtil.translate("drcreports.report.drc.fifteenYrsAndAboveMales.label");
+		col34 = MessageUtil.translate("drcreports.report.drc.fifteenYrsAndAboveFemales.label");
 		
 	}
 	
