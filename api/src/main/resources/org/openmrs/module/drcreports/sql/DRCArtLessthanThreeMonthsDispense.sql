@@ -10,7 +10,6 @@ WHERE pe.voided = 0
     WHERE o.person_id = p.patient_id
       AND o.voided = 0
       AND c.uuid = '3a0709e9-d7a8-44b9-9512-111db5ce3989'
-      AND o.value_numeric IS NOT NULL
       AND o.value_numeric < 90
       AND o.obs_datetime = (
         SELECT MAX(o2.obs_datetime)

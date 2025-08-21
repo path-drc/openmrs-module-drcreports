@@ -15,8 +15,7 @@ WHERE pe.voided = 0
         '160563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', -- Transfer in
         '163532AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'  -- Enroll into PMTCT
       )
-      AND DATE(o.obs_datetime) >= :onOrAfter
-      AND DATE(o.obs_datetime) <= :onOrBefore
+      AND DATE(o.obs_datetime) BETWEEN :onOrAfter AND :onOrBefore
       AND (
         -- If answer is Transfer In, must have ART Regimen in same encounter
         (c_answer.uuid = '160563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'

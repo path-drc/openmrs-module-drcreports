@@ -12,9 +12,7 @@ WHERE pe.voided = 0
       AND o.voided = 0
       AND c_question.uuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' -- ART initiation during this visit
       AND c_answer.uuid = '1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' -- Start ART
-      
-      AND DATE(o.obs_datetime) >= :onOrAfter
-      AND DATE(o.obs_datetime) <= :onOrBefore
+      AND DATE(o.obs_datetime) BETWEEN :onOrAfter AND :onOrBefore
   )
   AND EXISTS (
     -- Check for initiation date concept within date range
@@ -24,7 +22,6 @@ WHERE pe.voided = 0
     WHERE o_init_date.person_id = p.patient_id
       AND o_init_date.voided = 0
       AND c_init_date.uuid = '159599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' -- Initiation date concept
-      AND DATE(o_init_date.value_datetime) >= :onOrAfter
-      AND DATE(o_init_date.value_datetime) <= :onOrBefore
+      AND DATE(o_init_date.value_datetime) BETWEEN :onOrAfter AND :onOrBefore
   )
 ORDER BY p.patient_id;

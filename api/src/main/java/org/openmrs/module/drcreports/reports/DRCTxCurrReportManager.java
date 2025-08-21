@@ -38,7 +38,7 @@ import org.openmrs.module.reporting.cohort.definition.PresenceOrAbsenceCohortDef
 import org.openmrs.module.reporting.common.BooleanOperator;
 
 @Component
-public class DRCTx_CurrReportManager extends ActivatedReportManager {
+public class DRCTxCurrReportManager extends ActivatedReportManager {
 	
 	@Autowired
 	@Qualifier("initializer.InitializerService")
@@ -216,7 +216,7 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		
 		// Not stopped ART in date range
 		SqlCohortDefinition notStoppedARTSqlCD = new SqlCohortDefinition();
-		String notStoppedARTSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurrNotStopedART.sql");
+		String notStoppedARTSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurrNotStoppedART.sql");
 		notStoppedARTSqlCD.setQuery(notStoppedARTSql);
 		notStoppedARTSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		notStoppedARTSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
@@ -229,7 +229,7 @@ public class DRCTx_CurrReportManager extends ActivatedReportManager {
 		notTransferredOutSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		notTransferredOutSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
-		// Lessthan 3 months ART Dispensation
+		// Less than 3 months ART Dispensation
 		SqlCohortDefinition belowThreeMonthsDispensingSqlCD = new SqlCohortDefinition();
 		String belowThreeMonthsDispensingSql = getStringFromResource(
 		    "org/openmrs/module/drcreports/sql/DRCArtLessthanThreeMonthsDispense.sql");

@@ -12,8 +12,6 @@ WHERE pe.voided = 0
       AND o.voided = 0
       AND c_question.uuid = '1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' -- Decision on ART during this visit
       AND c_answer.uuid = '162904AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' -- Resume ART
-      
-      AND DATE(o.obs_datetime) >= :onOrAfter
-      AND DATE(o.obs_datetime) <= :onOrBefore
+      AND DATE(o.obs_datetime) BETWEEN :onOrAfter AND :onOrBefore
   )
 ORDER BY p.patient_id;
