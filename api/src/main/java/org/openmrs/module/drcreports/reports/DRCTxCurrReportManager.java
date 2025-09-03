@@ -44,6 +44,10 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 	@Qualifier("initializer.InitializerService")
 	private InitializerService inizService;
 	
+	@Autowired
+	@Qualifier("programWorkflowService")
+	private ProgramWorkflowService ps;
+	
 	@Override
 	public boolean isActivated() {
 		return inizService.getBooleanFromKey("report.drc.txCurr.active", true);
@@ -174,9 +178,10 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		
 		// HIV Care Program cohort
 		ProgramEnrollmentCohortDefinition pecd = new ProgramEnrollmentCohortDefinition();
-		ProgramWorkflowService ps = Context.getProgramWorkflowService();
+		//ProgramWorkflowService ps = Context.getProgramWorkflowService();
 		Program program = ps.getProgramByUuid("64f950e6-1b07-4ac0-8e7e-f3e148f3463f"); //HIV Care program
-		pecd.setPrograms(Collections.singletonList(program));
+		//pecd.setPrograms(Collections.singletonList(program));
+		pecd.setPrograms(Arrays.asList(program));
 		
 		// ART Initiated in date range
 		SqlCohortDefinition artInitiationSqlCD = new SqlCohortDefinition();
@@ -229,6 +234,13 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		notTransferredOutSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		notTransferredOutSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
+		// Interrupted in date range
+		SqlCohortDefinition interruptedSqlCD = new SqlCohortDefinition();
+		String interruptedSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCTxCurrInterrupted.sql");
+		interruptedSqlCD.setQuery(interruptedSql);
+		interruptedSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		interruptedSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
+		
 		// Less than 3 months ART Dispensation
 		SqlCohortDefinition belowThreeMonthsDispensingSqlCD = new SqlCohortDefinition();
 		String belowThreeMonthsDispensingSql = getStringFromResource(
@@ -248,13 +260,25 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		sixMonthsAndAboveDispensingSqlCD.setQuery(sixMonthsAndAboveDispensingSql);
 		
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-		// Composition for the OR condition (artInitiation OR resumeARTSqlCD OR transferInPMTCT OR multiMonth)
 		CompositionCohortDefinition atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD = new CompositionCohortDefinition();
+		
+		// Composition for the OR condition (artInitiation OR resumeARTSqlCD OR transferInPMTCT OR multiMonth)
+		
 		atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD.initializeFromQueries(BooleanOperator.OR, artInitiationSqlCD,
 		    resumeARTSqlCD, transferInPMTCTSqlCD, multiMonthSqlCD);
+		
+		// Remove interrupted Treatment patients
+		CompositionCohortDefinition excludingInterruptedCD = new CompositionCohortDefinition();
+		
+		excludingInterruptedCD.initializeFromQueries(BooleanOperator.NOT,
+		    atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD, interruptedSqlCD);
+		
 		// OR condition with the AND conditions (alive AND live AND Not stopped art AND Not Transferred Out)
-		ccd.initializeFromElements(atleastInArtInitiationOrTransferInOrPMTCTOrMultiMonthCD, alive, liveSqlCD,
-		    notStoppedARTSqlCD, notTransferredOutSqlCD, pecd);
+		ccd.initializeFromElements(excludingInterruptedCD, alive, liveSqlCD, notStoppedARTSqlCD, notTransferredOutSqlCD,
+		    pecd);
+		
+		CompositionCohortDefinition interup = new CompositionCohortDefinition();
+		interup.initializeFromElements(interruptedSqlCD);
 		
 		CompositionCohortDefinition lessThanThreeMonthsccd = new CompositionCohortDefinition();
 		lessThanThreeMonthsccd.initializeFromElements(ccd, belowThreeMonthsDispensingSqlCD);
@@ -280,9 +304,11 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		CompositionCohortDefinition ccd5 = new CompositionCohortDefinition();
 		ccd5.initializeFromElements(resumeARTSqlCD, alive, liveSqlCD);
 		
+		txCurr.addRow("interup", interup, parameterMappings);
+		
 		txCurr.addRow(getName(), ccd, parameterMappings);
-		txCurr.addRow(MessageUtil.translate("drcreports.report.drc.threeMonthsDrugsGiven.label"), lessThanThreeMonthsccd,
-		    parameterMappings);
+		txCurr.addRow(MessageUtil.translate("drcreports.report.drc.lessThanThreeMonthsDrugsGiven.label"),
+		    lessThanThreeMonthsccd, parameterMappings);
 		txCurr.addRow(MessageUtil.translate("drcreports.report.drc.threeToFiveMonthsDrugsGiven.label"), threeToFiveMonthsccd,
 		    parameterMappings);
 		txCurr.addRow(MessageUtil.translate("drcreports.report.drc.sixPlusMonthsDrugsGiven.label"), sixAndAboveMonthsccd,

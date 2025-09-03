@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+  <!-- APPENDIX J TEST CASES - Treatment Interruption Scenarios -->
+    
+    <!-- Patient A: Newly initiated, missed appointment, contacted and returned, on treatment at end -->
+    <!-- SHOULD SHOW UP ON TX_CURR -->
+    <person person_id="701" gender="F" birthdate="1992-04-10 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2021-04-10 00:00:00.0" voided="false" uuid="patient-701-uuid" />
+    <patient patient_id="701" creator="1" date_created="2021-04-10 00:00:00.0" changed_by="1" date_changed="2021-06-02 12:29:59.0" voided="false" void_reason="" />
+    
+    <!-- ART Initiation during reporting period -->
+    <encounter encounter_id="7001" encounter_type="10" patient_id="701" location_id="1" form_id="2" encounter_datetime="2025-06-05 10:00:00.0" creator="1" date_created="2025-06-05 10:00:00.0" voided="false" uuid="encounter-7001-uuid" />
+    
+    <!-- Initial ART start -->
+    <obs obs_id="8001" person_id="701" concept_id="1255" encounter_id="7001" obs_datetime="2025-06-05 10:00:00.0" location_id="1" value_coded="1256" creator="1" date_created="2025-06-05 10:00:00.0" voided="false" uuid="obs-8001-uuid" />
+    <obs obs_id="8002" person_id="701" concept_id="159599" encounter_id="7001" obs_datetime="2025-06-05 10:00:00.0" location_id="1" value_datetime="2025-06-05 00:00:00.0" creator="1" date_created="2025-06-05 10:00:00.0" voided="false" uuid="obs-8002-uuid" />
+    <!-- Initial ARV dispensing (30 days) -->
+    <obs obs_id="8003" person_id="701" concept_id="3090" encounter_id="7001" obs_datetime="2025-06-05 10:00:00.0" location_id="1" value_numeric="30" creator="1" date_created="2025-06-05 10:00:00.0" voided="false" uuid="obs-8003-uuid" />
+    <!-- Appointment scheduled for July 5 (30 days later) -->
+    <obs obs_id="8004" person_id="701" concept_id="5096" encounter_id="7001" obs_datetime="2025-06-05 10:00:00.0" location_id="1" value_datetime="2025-07-05 00:00:00.0" creator="1" date_created="2025-06-05 10:00:00.0" voided="false" uuid="obs-8004-uuid" />
+    
+    <!-- Patient missed July 5 appointment, but was contacted and returned Aug 10 (after 28+ days) -->
+    <encounter encounter_id="7001111" encounter_type="10" patient_id="701" location_id="1" form_id="2" encounter_datetime="2025-08-10 14:00:00.0" creator="1" date_created="2025-08-10 14:00:00.0" voided="false" uuid="encounter-7001111-uuid" />
+    
+    <!-- Resumed treatment with new ARV dispensing covering rest of period -->
+    <obs obs_id="8005" person_id="701" concept_id="3090" encounter_id="7001111" obs_datetime="2025-08-10 14:00:00.0" location_id="1" value_numeric="35" creator="1" date_created="2025-08-10 14:00:00.0" voided="false" uuid="obs-8005-uuid" />
+    <!-- Next appointment beyond reporting period -->
+    <obs obs_id="8006" person_id="701" concept_id="5096" encounter_id="7001111" obs_datetime="2025-08-10 14:00:00.0" location_id="1" value_datetime="2025-09-05 00:00:00.0" creator="1" date_created="2025-08-10 14:00:00.0" voided="false" uuid="obs-8006-uuid" />
+    
+    <patient_program patient_program_id="7001" patient_id="701" program_id="1" date_enrolled="2025-06-05 00:00:00.0" date_completed="[NULL]" location_id="1" outcome_concept_id="[NULL]" creator="1" date_created="2025-06-05 10:00:00.0" voided="false" uuid="pp-701-uuid" />
+
+    <!-- Patient B: Started on treatment before period, missed appointment, contacted and returned, on treatment at end -->
+    <!-- SHOULD SHOW UP ON TX_CURR -->
+    <person person_id="702" gender="M" birthdate="1988-11-22 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2021-04-10 00:00:00.0" voided="false" uuid="patient-702-uuid" />
+    <patient patient_id="702" creator="1" date_created="2021-04-10 00:00:00.0" changed_by="1" date_changed="2021-06-02 12:29:59.0" voided="false" void_reason="" />
+    
+    <!-- Pre-period ART initiation -->
+    <encounter encounter_id="7002" encounter_type="10" patient_id="702" location_id="1" form_id="2" encounter_datetime="2024-12-15 10:00:00.0" creator="1" date_created="2024-12-15 10:00:00.0" voided="false" uuid="encounter-7002-uuid" />
+    <obs obs_id="8007" person_id="702" concept_id="1255" encounter_id="7002" obs_datetime="2024-12-15 10:00:00.0" location_id="1" value_coded="1256" creator="1" date_created="2024-12-15 10:00:00.0" voided="false" uuid="obs-8007-uuid" />
+    <obs obs_id="8008" person_id="702" concept_id="159599" encounter_id="7002" obs_datetime="2024-12-15 10:00:00.0" location_id="1" value_datetime="2024-12-15 00:00:00.0" creator="1" date_created="2024-12-15 10:00:00.0" voided="false" uuid="obs-8008-uuid" />
+    
+    <!-- Visit at start of reporting period with ARV dispensing -->
+    <encounter encounter_id="7002222" encounter_type="10" patient_id="702" location_id="1" form_id="2" encounter_datetime="2025-05-25 11:00:00.0" creator="1" date_created="2025-05-25 11:00:00.0" voided="false" uuid="encounter-7002222-uuid" />
+    
+    <!-- ARV dispensing for 45 days (until July 9) -->
+    <obs obs_id="8009" person_id="702" concept_id="3090" encounter_id="7002222" obs_datetime="2025-05-25 11:00:00.0" location_id="1" value_numeric="45" creator="1" date_created="2025-05-25 11:00:00.0" voided="false" uuid="obs-8009-uuid" />
+    <!-- Appointment scheduled for July 9 -->
+    <obs obs_id="8010" person_id="702" concept_id="5096" encounter_id="7002222" obs_datetime="2025-05-25 11:00:00.0" location_id="1" value_datetime="2025-07-09 00:00:00.0" creator="1" date_created="2025-05-25 11:00:00.0" voided="false" uuid="obs-8010-uuid" />
+    
+    <!-- Patient missed July 9 appointment, contacted and returned Aug 15 (after 28+ days) -->
+    <encounter encounter_id="7002333" encounter_type="10" patient_id="702" location_id="1" form_id="2" encounter_datetime="2025-08-15 13:00:00.0" creator="1" date_created="2025-08-15 13:00:00.0" voided="false" uuid="encounter-7002333-uuid" />
+    
+    <!-- Resumed treatment with ARV covering rest of period -->
+    <obs obs_id="8011" person_id="702" concept_id="3090" encounter_id="7002333" obs_datetime="2025-08-15 13:00:00.0" location_id="1" value_numeric="20" creator="1" date_created="2025-08-15 13:00:00.0" voided="false" uuid="obs-8011-uuid" />
+    <obs obs_id="8012" person_id="702" concept_id="5096" encounter_id="7002333" obs_datetime="2025-08-15 13:00:00.0" location_id="1" value_datetime="2025-09-10 00:00:00.0" creator="1" date_created="2025-08-15 13:00:00.0" voided="false" uuid="obs-8012-uuid" />
+    
+    <patient_program patient_program_id="7002" patient_id="702" program_id="1" date_enrolled="2024-12-15 00:00:00.0" date_completed="[NULL]" location_id="1" outcome_concept_id="[NULL]" creator="1" date_created="2024-12-15 10:00:00.0" voided="false" uuid="pp-702-uuid" />
+
+    <!-- Patient C: Started on treatment before period, missed appointment, NOT contacted, did NOT return -->
+    <!-- SHOULD NOT SHOW UP ON TX_CURR -->
+    <person person_id="703" gender="F" birthdate="1985-08-15 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2021-04-10 00:00:00.0" voided="false" uuid="patient-703-uuid" />
+    <patient patient_id="703" creator="1" date_created="2021-04-10 00:00:00.0" changed_by="1" date_changed="2021-06-02 12:29:59.0" voided="false" void_reason="" />
+    
+    <!-- Pre-period ART initiation -->
+    <encounter encounter_id="7003" encounter_type="10" patient_id="703" location_id="1" form_id="2" encounter_datetime="2024-10-20 09:00:00.0" creator="1" date_created="2024-10-20 09:00:00.0" voided="false" uuid="encounter-7003-uuid" />
+    <obs obs_id="8013" person_id="703" concept_id="1255" encounter_id="7003" obs_datetime="2024-10-20 09:00:00.0" location_id="1" value_coded="1256" creator="1" date_created="2024-10-20 09:00:00.0" voided="false" uuid="obs-8013-uuid" />
+    <obs obs_id="8014" person_id="703" concept_id="159599" encounter_id="7003" obs_datetime="2024-10-20 09:00:00.0" location_id="1" value_datetime="2024-10-20 00:00:00.0" creator="1" date_created="2024-10-20 09:00:00.0" voided="false" uuid="obs-8014-uuid" />
+    
+    <!-- Last visit before missed appointment -->
+    <encounter encounter_id="7003333" encounter_type="10" patient_id="703" location_id="1" form_id="2" encounter_datetime="2025-05-10 14:00:00.0" creator="1" date_created="2025-05-10 14:00:00.0" voided="false" uuid="encounter-7003333-uuid" />
+    
+    <!-- ARV dispensing for 35 days (until June 14) -->
+    <obs obs_id="8015" person_id="703" concept_id="3090" encounter_id="7003333" obs_datetime="2025-05-10 14:00:00.0" location_id="1" value_numeric="35" creator="1" date_created="2025-05-10 14:00:00.0" voided="false" uuid="obs-8015-uuid" />
+    <!-- Appointment scheduled for June 14 -->
+    <obs obs_id="8016" person_id="703" concept_id="5096" encounter_id="7003333" obs_datetime="2025-05-10 14:00:00.0" location_id="1" value_datetime="2025-06-14 00:00:00.0" creator="1" date_created="2025-05-10 14:00:00.0" voided="false" uuid="obs-8016-uuid" />
+    
+    <!-- Patient missed June 14 appointment and NEVER returned - no subsequent encounters -->
+    <!-- By end of period (Aug 31), patient has been off treatment for 78+ days (since June 14)-->
+    
+    <patient_program patient_program_id="7003" patient_id="703" program_id="1" date_enrolled="2024-10-20 00:00:00.0" date_completed="[NULL]" location_id="1" outcome_concept_id="[NULL]" creator="1" date_created="2024-10-20 09:00:00.0" voided="false" uuid="pp-703-uuid" />
+
+    <!-- Patient D: Started period NOT on treatment, contacted and came back, but interrupted again -->
+    <!-- SHOULD NOT SHOW UP ON TX_CURR -->
+    <person person_id="704" gender="F" birthdate="1992-01-08 00:00:00.0" birthdate_estimated="0" dead="false" creator="1" date_created="2021-04-10 00:00:00.0" voided="false" uuid="patient-704-uuid" />
+    <patient patient_id="704" creator="1" date_created="2021-04-10 00:00:00.0" changed_by="1" date_changed="2021-06-02 12:29:59.0" voided="false" void_reason="" />
+    
+    <!-- Earlier ART initiation (before current period) -->
+    <encounter encounter_id="7004" encounter_type="10" patient_id="704" location_id="1" form_id="2" encounter_datetime="2024-08-15 10:00:00.0" creator="1" date_created="2024-08-15 10:00:00.0" voided="false" uuid="encounter-7004-uuid" />
+    <obs obs_id="8017" person_id="704" concept_id="1255" encounter_id="7004" obs_datetime="2024-08-15 10:00:00.0" location_id="1" value_coded="1256" creator="1" date_created="2024-08-15 10:00:00.0" voided="false" uuid="obs-8017-uuid" />
+    <obs obs_id="8018" person_id="704" concept_id="159599" encounter_id="7004" obs_datetime="2024-08-15 10:00:00.0" location_id="1" value_datetime="2024-08-15 00:00:00.0" creator="1" date_created="2024-08-15 10:00:00.0" voided="false" uuid="obs-8018-uuid" />
+    
+    <!-- Last dispensing before period ended in March 2025, so patient starts reporting period NOT on treatment -->
+    <encounter encounter_id="7004444" encounter_type="10" patient_id="704" location_id="1" form_id="2" encounter_datetime="2025-03-20 11:00:00.0" creator="1" date_created="2025-03-20 11:00:00.0" voided="false" uuid="encounter-7004444-uuid" />
+    <obs obs_id="8019" person_id="704" concept_id="3090" encounter_id="7004444" obs_datetime="2025-03-20 11:00:00.0" location_id="1" value_numeric="30" creator="1" date_created="2025-03-20 11:00:00.0" voided="false" uuid="obs-8019-uuid" />
+    <obs obs_id="8020" person_id="704" concept_id="5096" encounter_id="7004444" obs_datetime="2025-03-20 11:00:00.0" location_id="1" value_datetime="2025-04-19 00:00:00.0" creator="1" date_created="2025-03-20 11:00:00.0" voided="false" uuid="obs-8020-uuid" />
+    
+    <!-- Patient contacted and returned during reporting period -->
+    <encounter encounter_id="7004555" encounter_type="10" patient_id="704" location_id="1" form_id="2" encounter_datetime="2025-06-20 15:00:00.0" creator="1" date_created="2025-06-20 15:00:00.0" voided="false" uuid="encounter-7004555-uuid" />
+    
+    <!-- Resumed ART -->
+    <obs obs_id="8021" person_id="704" concept_id="1255" encounter_id="7004555" obs_datetime="2025-06-20 15:00:00.0" location_id="1" value_coded="162904" creator="1" date_created="2025-06-20 15:00:00.0" voided="false" uuid="obs-8021-uuid" />
+    <!-- ARV dispensing for 30 days (until July 20) -->
+    <obs obs_id="8022" person_id="704" concept_id="3090" encounter_id="7004555" obs_datetime="2025-06-20 15:00:00.0" location_id="1" value_numeric="30" creator="1" date_created="2025-06-20 15:00:00.0" voided="false" uuid="obs-8022-uuid" />
+    <!-- Appointment scheduled for July 20 -->
+    <obs obs_id="8023" person_id="704" concept_id="5096" encounter_id="7004555" obs_datetime="2025-06-20 15:00:00.0" location_id="1" value_datetime="2025-07-20 00:00:00.0" creator="1" date_created="2025-06-20 15:00:00.0" voided="false" uuid="obs-8023-uuid" />
+    
+    <!-- Patient missed July 20 appointment and did NOT return again -->
+    <!-- By end of period (Aug 31), patient has been off treatment for 42+ days (since July 20) -->
+    
+    <patient_program patient_program_id="7004" patient_id="704" program_id="1" date_enrolled="2024-08-15 00:00:00.0" date_completed="[NULL]" location_id="1" outcome_concept_id="[NULL]" creator="1" date_created="2024-08-15 10:00:00.0" voided="false" uuid="pp-704-uuid" />
+</dataset>

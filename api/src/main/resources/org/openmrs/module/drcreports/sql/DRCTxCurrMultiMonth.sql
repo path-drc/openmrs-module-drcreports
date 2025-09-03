@@ -4,13 +4,13 @@ INNER JOIN person pe ON p.patient_id = pe.person_id
 WHERE pe.voided = 0 
   AND p.voided = 0
   AND EXISTS (
-    -- Check for "Next Appointment Date" within or beyond date range
+    -- Check for "Next Refill Date" within or beyond date range
     SELECT 1 
     FROM obs o_appt
     INNER JOIN concept c_appt ON o_appt.concept_id = c_appt.concept_id
     WHERE o_appt.person_id = p.patient_id
       AND o_appt.voided = 0
-      AND c_appt.uuid = '5096AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+      AND c_appt.uuid = '162549AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
       AND DATE(o_appt.value_datetime) >= :onOrAfter
   )
   AND EXISTS (
@@ -40,7 +40,7 @@ WHERE pe.voided = 0
             INNER JOIN concept c_appt ON o_appt.concept_id = c_appt.concept_id
             WHERE o_appt.person_id = p.patient_id
               AND o_appt.voided = 0
-              AND c_appt.uuid = '5096AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+              AND c_appt.uuid = '162549AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
               AND (
                 -- If appointment is within 28 days of end date, just check it exists
                 (DATE(o_appt.value_datetime) > DATE_SUB(:onOrBefore, INTERVAL 28 DAY))

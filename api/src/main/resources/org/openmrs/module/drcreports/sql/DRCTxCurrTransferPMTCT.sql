@@ -39,7 +39,7 @@ WHERE pe.voided = 0
            INNER JOIN concept c_prevention_value ON o_prevention.value_coded = c_prevention_value.concept_id
            WHERE o_prevention.encounter_id = o.encounter_id
              AND o_prevention.voided = 0
-             AND c_prevention.uuid = '163532AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' -- ART Prevention being taken
+             AND c_prevention.uuid = '163780AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' -- ART Prevention being taken
              AND c_prevention_value.uuid = '1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' -- YES
          )
         )
