@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <!-- Test Parameters: :onOrAfter = '2024-01-01', :onOrBefore = '2024-12-31' -->
+    
+
+    <!-- KEY CONCEPTS FROM YOUR CODE -->
+    
+        <!-- ART initiation during this visit (Question concept) -->
+    <concept concept_id="1255" retired="false" datatype_id="2" class_id="5" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="1255AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+    <concept_name concept_id="1255" name="Antiretroviral plan" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="1255" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="art-plan-name-uuid" />
+
+        <!-- ART initiation date -->
+    <concept concept_id="159599" retired="false" datatype_id="6" class_id="5" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="159599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+    <concept_name concept_id="159599" name="Date of ART initiation" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="159599" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="art-initiation-date-name-uuid" />
+
+
+    <!-- Start ART (Answer concept) -->
+    <concept concept_id="1256" retired="false" datatype_id="4" class_id="5" is_set="false" creator="1" date_created="2021-06-02 06:17:32.0" version="" uuid="1256AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+    <concept_name concept_id="1256" name="Start drugs" locale="en" creator="1" date_created="2004-08-12 00:00:00.0" concept_name_id="1256" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="start-art-name-uuid" />
+
+
+    <!-- CD4 Count Concept (5497AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) -->
+    <concept concept_id="5497" retired="false" datatype_id="1" class_id="2" is_set="false" 
+            creator="1" date_created="2023-01-01 00:00:00" 
+            uuid="5497AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+    <concept_name concept_id="5497" name="CD4 Count" locale="en" creator="1" 
+                 date_created="2023-01-01 00:00:00" concept_name_id="5497" 
+                 concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" 
+                 uuid="cd4-count-name-uuid"/>
+
+    <!-- Breastfeeding Question (5632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) -->
+    <concept concept_id="5632" retired="false" datatype_id="2" class_id="1" is_set="false" 
+            creator="1" date_created="2023-01-01 00:00:00" 
+            uuid="5632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+    <concept_name concept_id="5632" name="Breastfeeding" locale="en" creator="1" 
+                 date_created="2023-01-01 00:00:00" concept_name_id="5632" 
+                 concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" 
+                 uuid="breastfeeding-name-uuid"/>
+
+    <!-- Yes Answer (1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) -->
+    <concept concept_id="1065" retired="false" datatype_id="4" class_id="5" is_set="false" 
+            creator="1" date_created="2023-01-01 00:00:00" 
+            uuid="1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+    <concept_name concept_id="1065" name="Yes" locale="en" creator="1" 
+                 date_created="2023-01-01 00:00:00" concept_name_id="1065" 
+                 concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" 
+                 uuid="yes-name-uuid"/>
+
+    <!-- No Answer (1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) -->
+    <concept concept_id="1066" retired="false" datatype_id="4" class_id="5" is_set="false" 
+            creator="1" date_created="2023-01-01 00:00:00" 
+            uuid="1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+    <concept_name concept_id="1066" name="No" locale="en" creator="1" 
+                 date_created="2023-01-01 00:00:00" concept_name_id="1066" 
+                 concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" 
+                 uuid="no-name-uuid"/>
+
+    <!-- HIV PROGRAM SETUP -->
+    <concept concept_id="160631" retired="false" datatype_id="4" class_id="7" is_set="false" 
+            creator="1" date_created="2023-01-01 00:00:00" 
+            uuid="160631AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+    <concept_name concept_id="160631" name="HIV Program" locale="en" creator="1" 
+                 date_created="2023-01-01 00:00:00" concept_name_id="160631" 
+                 concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" 
+                 uuid="hiv-program-name-uuid"/>
+
+    <program program_id="1" concept_id="160631" name="HIV Care Program" 
+            description="HIV Care and Treatment Program" 
+            date_created="2023-01-01 00:00:00" creator="1" retired="false" 
+            uuid="64f950e6-1b07-4ac0-8e7e-f3e148f3463f"/>
+
+    <!-- ENCOUNTER TYPES -->
+    <encounter_type encounter_type_id="10" name="HIV Consultation" 
+                   description="HIV Consultation Visit" creator="1" 
+                   date_created="2023-01-01 00:00:00" retired="false" 
+                   uuid="cb0a65a7-0587-477e-89b9-cf2fd144f1d4"/>
+
+    <!-- PATIENT TEST CASES -->
+
+    <!-- Patient 101: HIV Program + ART Initiation + CD4 < 200 -->
+    <person person_id="101" gender="M" birthdate="1985-06-15 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-101-uuid"/>
+    <patient patient_id="101" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <patient_program patient_program_id="101" patient_id="101" program_id="1" 
+                   date_enrolled="2024-01-15 00:00:00" date_completed="[NULL]" 
+                   location_id="1" outcome_concept_id="[NULL]" creator="1" 
+                   date_created="2024-01-15 00:00:00" voided="false" 
+                   uuid="pp-101-uuid"/>
+
+    <encounter encounter_id="1101" encounter_type="10" patient_id="101" location_id="1" 
+              encounter_datetime="2024-02-15 10:00:00" creator="1" 
+              date_created="2024-02-15 10:00:00" voided="false" 
+              uuid="encounter-1101-uuid"/>
+
+    <!-- CD4 count = 150 (< 200) -->
+    <obs obs_id="2101" person_id="101" concept_id="5497" encounter_id="1101" 
+        obs_datetime="2024-02-15 10:00:00" location_id="1" value_numeric="150" 
+        creator="1" date_created="2024-02-15 10:00:00" voided="false" 
+        uuid="obs-2101-uuid"/>
+
+    <!-- ART initiation obs for Patient 101 -->
+    <obs obs_id="3001" person_id="101" concept_id="1255" encounter_id="1101"
+        obs_datetime="2024-02-15 10:00:00" location_id="1" value_coded="1256"
+        creator="1" date_created="2024-02-15 10:00:00" voided="false"
+        uuid="obs-3001-uuid"/>
+    <!-- ART initiation date during period -->
+    <obs obs_id="30011" person_id="101" concept_id="159599" encounter_id="1101" obs_datetime="2024-06-15 10:00:00.0" location_id="1" value_datetime="2024-06-15 00:00:00.0" creator="1" date_created="2024-06-15 10:00:00.0" voided="false" uuid="obs-3001f-uuid" />
+
+    <!-- Patient 102: HIV Program + ART Initiation + CD4 >= 200 -->
+    <person person_id="102" gender="F" birthdate="1990-03-20 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-102-uuid"/>
+    <patient patient_id="102" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <patient_program patient_program_id="102" patient_id="102" program_id="1" 
+                   date_enrolled="2024-03-10 00:00:00" date_completed="[NULL]" 
+                   location_id="1" outcome_concept_id="[NULL]" creator="1" 
+                   date_created="2024-03-10 00:00:00" voided="false" 
+                   uuid="pp-102-uuid"/>
+
+    <encounter encounter_id="1102" encounter_type="10" patient_id="102" location_id="1" 
+              encounter_datetime="2024-04-10 14:00:00" creator="1" 
+              date_created="2024-04-10 14:00:00" voided="false" 
+              uuid="encounter-1102-uuid"/>
+
+    <!-- CD4 count = 350 (>= 200) -->
+    <obs obs_id="2102" person_id="102" concept_id="5497" encounter_id="1102" 
+        obs_datetime="2024-04-10 14:00:00" location_id="1" value_numeric="350" 
+        creator="1" date_created="2024-04-10 14:00:00" voided="false" 
+        uuid="obs-2102-uuid"/>
+
+    <!-- ART initiation obs for Patient 102 -->
+    <obs obs_id="3002" person_id="102" concept_id="1255" encounter_id="1102"
+        obs_datetime="2024-04-10 14:00:00" location_id="1" value_coded="1256"
+        creator="1" date_created="2024-04-10 14:00:00" voided="false"
+        uuid="obs-3002-uuid"/>
+<!-- ART initiation date during period -->
+    <obs obs_id="30021" person_id="102" concept_id="159599" encounter_id="1102" obs_datetime="2024-06-15 10:00:00.0" location_id="1" value_datetime="2024-06-15 00:00:00.0" creator="1" date_created="2024-06-15 10:00:00.0" voided="false" uuid="obs-3002f-uuid" />
+
+    <!-- Patient 103: HIV Program + ART Initiation + Breastfeeding + NO CD4 count (Unknown CD4)-->
+    <person person_id="103" gender="F" birthdate="1988-08-10 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-103-uuid"/>
+    <patient patient_id="103" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <patient_program patient_program_id="103" patient_id="103" program_id="1" 
+                   date_enrolled="2024-05-20 00:00:00" date_completed="[NULL]" 
+                   location_id="1" outcome_concept_id="[NULL]" creator="1" 
+                   date_created="2024-05-20 00:00:00" voided="false" 
+                   uuid="pp-103-uuid"/>
+
+    <encounter encounter_id="1103" encounter_type="10" patient_id="103" location_id="1" 
+              encounter_datetime="2024-06-20 09:00:00" creator="1" 
+              date_created="2024-06-20 09:00:00" voided="false" 
+              uuid="encounter-1103-uuid"/>
+
+    <!-- Breastfeeding = Yes -->
+    <obs obs_id="2103" person_id="103" concept_id="5632" encounter_id="1103" 
+        obs_datetime="2024-06-20 09:00:00" location_id="1" value_coded="1065" 
+        creator="1" date_created="2024-06-20 09:00:00" voided="false" 
+        uuid="obs-2103-uuid"/>
+
+    <!-- ART initiation obs for Patient 103 -->
+    <obs obs_id="3003" person_id="103" concept_id="1255" encounter_id="1103"
+        obs_datetime="2024-06-20 09:00:00" location_id="1" value_coded="1256"
+        creator="1" date_created="2024-06-20 09:00:00" voided="false"
+        uuid="obs-3003-uuid"/>
+
+        <!-- ART initiation date during period -->
+    <obs obs_id="30031" person_id="103" concept_id="159599" encounter_id="1103" obs_datetime="2024-06-15 10:00:00.0" location_id="1" value_datetime="2024-06-15 00:00:00.0" creator="1" date_created="2024-06-15 10:00:00.0" voided="false" uuid="obs-3003f-uuid" />
+
+    <!-- Patient 104: HIV Program + ART Initiation + NO CD4 count (Unknown CD4) -->
+    <person person_id="104" gender="M" birthdate="1992-01-18 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-104-uuid"/>
+    <patient patient_id="104" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <patient_program patient_program_id="104" patient_id="104" program_id="1" 
+                   date_enrolled="2024-07-10 00:00:00" date_completed="[NULL]" 
+                   location_id="1" outcome_concept_id="[NULL]" creator="1" 
+                   date_created="2024-07-10 00:00:00" voided="false" 
+                   uuid="pp-104-uuid"/>
+
+    <encounter encounter_id="1104" encounter_type="10" patient_id="104" location_id="1" 
+              encounter_datetime="2024-08-10 11:00:00" creator="1" 
+              date_created="2024-08-10 11:00:00" voided="false" 
+              uuid="encounter-1104-uuid"/>
+
+    <!-- No CD4 count observation for this patient -->
+
+    <!-- ART initiation obs for Patient 104 -->
+    <obs obs_id="3004" person_id="104" concept_id="1255" encounter_id="1104"
+        obs_datetime="2024-08-10 11:00:00" location_id="1" value_coded="1256"
+        creator="1" date_created="2024-08-10 11:00:00" voided="false"
+        uuid="obs-3004-uuid"/>
+<!-- ART initiation date during period -->
+    <obs obs_id="30041" person_id="104" concept_id="159599" encounter_id="1101" obs_datetime="2024-06-15 10:00:00.0" location_id="1" value_datetime="2024-06-15 00:00:00.0" creator="1" date_created="2024-06-15 10:00:00.0" voided="false" uuid="obs-3004f-uuid" />
+
+    <!-- Patient 105: HIV Program + ART Initiation + CD4 < 200 + Breastfeeding -->
+    <person person_id="105" gender="F" birthdate="1987-09-12 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-105-uuid"/>
+    <patient patient_id="105" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <patient_program patient_program_id="105" patient_id="105" program_id="1" 
+                   date_enrolled="2024-09-05 00:00:00" date_completed="[NULL]" 
+                   location_id="1" outcome_concept_id="[NULL]" creator="1" 
+                   date_created="2024-09-05 00:00:00" voided="false" 
+                   uuid="pp-105-uuid"/>
+
+    <encounter encounter_id="1105" encounter_type="10" patient_id="105" location_id="1" 
+              encounter_datetime="2024-10-05 13:00:00" creator="1" 
+              date_created="2024-10-05 13:00:00" voided="false" 
+              uuid="encounter-1105-uuid"/>
+
+    <!-- CD4 count = 120 (< 200) -->
+    <obs obs_id="2105" person_id="105" concept_id="5497" encounter_id="1105" 
+        obs_datetime="2024-10-05 13:00:00" location_id="1" value_numeric="120" 
+        creator="1" date_created="2024-10-05 13:00:00" voided="false" 
+        uuid="obs-2105-uuid"/>
+
+    <!-- Breastfeeding = Yes -->
+    <obs obs_id="2106" person_id="105" concept_id="5632" encounter_id="1105" 
+        obs_datetime="2024-10-05 13:00:00" location_id="1" value_coded="1065" 
+        creator="1" date_created="2024-10-05 13:00:00" voided="false" 
+        uuid="obs-2106-uuid"/>
+
+    <!-- ART initiation obs for Patient 105 -->
+    <obs obs_id="3005" person_id="105" concept_id="1255" encounter_id="1105"
+        obs_datetime="2024-10-05 13:00:00" location_id="1" value_coded="1256"
+        creator="1" date_created="2024-10-05 13:00:00" voided="false"
+        uuid="obs-3005-uuid"/>
+<!-- ART initiation date during period -->
+    <obs obs_id="30051" person_id="105" concept_id="159599" encounter_id="1101" obs_datetime="2024-06-15 10:00:00.0" location_id="1" value_datetime="2024-06-15 00:00:00.0" creator="1" date_created="2024-06-15 10:00:00.0" voided="false" uuid="obs-3005f-uuid" />
+
+    <!-- Patient 106: HIV Program + ART Initiation + CD4 >= 200 + NOT Breastfeeding -->
+    <person person_id="106" gender="F" birthdate="1983-05-25 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-106-uuid"/>
+    <patient patient_id="106" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <patient_program patient_program_id="106" patient_id="106" program_id="1" 
+                   date_enrolled="2024-11-15 00:00:00" date_completed="[NULL]" 
+                   location_id="1" outcome_concept_id="[NULL]" creator="1" 
+                   date_created="2024-11-15 00:00:00" voided="false" 
+                   uuid="pp-106-uuid"/>
+
+    <encounter encounter_id="1106" encounter_type="10" patient_id="106" location_id="1" 
+              encounter_datetime="2024-12-15 15:00:00" creator="1" 
+              date_created="2024-12-15 15:00:00" voided="false" 
+              uuid="encounter-1106-uuid"/>
+
+    <!-- CD4 count = 280 (>= 200) -->
+    <obs obs_id="2107" person_id="106" concept_id="5497" encounter_id="1106" 
+        obs_datetime="2024-12-15 15:00:00" location_id="1" value_numeric="280" 
+        creator="1" date_created="2024-12-15 15:00:00" voided="false" 
+        uuid="obs-2107-uuid"/>
+
+    <!-- Breastfeeding = No -->
+    <obs obs_id="2108" person_id="106" concept_id="5632" encounter_id="1106" 
+        obs_datetime="2024-12-15 15:00:00" location_id="1" value_coded="1066" 
+        creator="1" date_created="2024-12-15 15:00:00" voided="false" 
+        uuid="obs-2108-uuid"/>
+
+    <!-- ART initiation obs for Patient 106 -->
+    <obs obs_id="3006" person_id="106" concept_id="1255" encounter_id="1106"
+        obs_datetime="2024-12-15 15:00:00" location_id="1" value_coded="1256"
+        creator="1" date_created="2024-12-15 15:00:00" voided="false"
+        uuid="obs-3006-uuid"/>
+<!-- ART initiation date during period -->
+    <obs obs_id="30061" person_id="106" concept_id="159599" encounter_id="1101" obs_datetime="2024-06-15 10:00:00.0" location_id="1" value_datetime="2024-06-15 00:00:00.0" creator="1" date_created="2024-06-15 10:00:00.0" voided="false" uuid="obs-3006f-uuid" />
+
+    <!-- Patient 107: NOT in HIV Program (should not match any cohorts) -->
+    <person person_id="107" gender="M" birthdate="1986-02-14 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-107-uuid"/>
+    <patient patient_id="107" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <!-- No patient_program record - not enrolled in HIV program -->
+
+    <encounter encounter_id="1107" encounter_type="10" patient_id="107" location_id="1" 
+              encounter_datetime="2024-06-01 10:00:00" creator="1" 
+              date_created="2024-06-01 10:00:00" voided="false" 
+              uuid="encounter-1107-uuid"/>
+
+    <!-- CD4 count = 180 (< 200) -->
+    <obs obs_id="2109" person_id="107" concept_id="5497" encounter_id="1107" 
+        obs_datetime="2024-06-01 10:00:00" location_id="1" value_numeric="180" 
+        creator="1" date_created="2024-06-01 10:00:00" voided="false" 
+        uuid="obs-2109-uuid"/>
+
+    <!-- Patient 108: HIV Program + ART Initiation BEFORE date range -->
+    <person person_id="108" gender="F" birthdate="1989-06-30 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-108-uuid"/>
+    <patient patient_id="108" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <patient_program patient_program_id="108" patient_id="108" program_id="1" 
+                   date_enrolled="2023-06-15 00:00:00" date_completed="[NULL]" 
+                   location_id="1" outcome_concept_id="[NULL]" creator="1" 
+                   date_created="2023-06-15 00:00:00" voided="false" 
+                   uuid="pp-108-uuid"/>
+
+    <!-- ART initiation BEFORE the test period (2023) -->
+    <encounter encounter_id="1108" encounter_type="10" patient_id="108" location_id="1" 
+              encounter_datetime="2023-07-15 10:00:00" creator="1" 
+              date_created="2023-07-15 10:00:00" voided="false" 
+              uuid="encounter-1108-uuid"/>
+
+    <!-- CD4 count = 90 (< 200) but ART initiated outside date range -->
+    <obs obs_id="2110" person_id="108" concept_id="5497" encounter_id="1108" 
+        obs_datetime="2023-07-15 10:00:00" location_id="1" value_numeric="90" 
+        creator="1" date_created="2023-07-15 10:00:00" voided="false" 
+        uuid="obs-2110-uuid"/>
+
+    <!-- Patient 109: HIV Program + ART Initiation AFTER date range -->
+    <person person_id="109" gender="M" birthdate="1984-08-20 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-109-uuid"/>
+    <patient patient_id="109" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <patient_program patient_program_id="109" patient_id="109" program_id="1" 
+                   date_enrolled="2025-01-10 00:00:00" date_completed="[NULL]" 
+                   location_id="1" outcome_concept_id="[NULL]" creator="1" 
+                   date_created="2025-01-10 00:00:00" voided="false" 
+                   uuid="pp-109-uuid"/>
+
+    <!-- ART initiation AFTER the test period (2025) -->
+    <encounter encounter_id="1109" encounter_type="10" patient_id="109" location_id="1" 
+              encounter_datetime="2025-02-10 10:00:00" creator="1" 
+              date_created="2025-02-10 10:00:00" voided="false" 
+              uuid="encounter-1109-uuid"/>
+
+    <!-- CD4 count = 220 (>= 200) but ART initiated outside date range -->
+    <obs obs_id="2111" person_id="109" concept_id="5497" encounter_id="1109" 
+        obs_datetime="2025-02-10 10:00:00" location_id="1" value_numeric="220" 
+        creator="1" date_created="2025-02-10 10:00:00" voided="false" 
+        uuid="obs-2111-uuid"/>
+
+   
+    <!-- Patient 112: HIV Program + Multiple CD4 observations (test LAST modifier) -->
+    <person person_id="112" gender="M" birthdate="1991-04-10 00:00:00" 
+           birthdate_estimated="false" dead="false" creator="1" 
+           date_created="2023-01-01 00:00:00" voided="false" 
+           uuid="patient-112-uuid"/>
+    <patient patient_id="112" creator="1" date_created="2023-01-01 00:00:00" 
+            voided="false" void_reason=""/>
+
+    <patient_program patient_program_id="112" patient_id="112" program_id="1" 
+                   date_enrolled="2024-01-30 00:00:00" date_completed="[NULL]" 
+                   location_id="1" outcome_concept_id="[NULL]" creator="1" 
+                   date_created="2024-01-30 00:00:00" voided="false" 
+                   uuid="pp-112-uuid"/>
+
+    <!-- Earlier encounter with higher CD4 -->
+    <encounter encounter_id="1112" encounter_type="10" patient_id="112" location_id="1" 
+              encounter_datetime="2024-03-01 10:00:00" creator="1" 
+              date_created="2024-03-01 10:00:00" voided="false" 
+              uuid="encounter-1112-uuid"/>
+
+    <!-- CD4 count = 250 (>= 200) - earlier observation -->
+    <obs obs_id="2114" person_id="112" concept_id="5497" encounter_id="1112" 
+        obs_datetime="2024-03-01 10:00:00" location_id="1" value_numeric="250" 
+        creator="1" date_created="2024-03-01 10:00:00" voided="false" 
+        uuid="obs-2114-uuid"/>
+
+                       <!-- ART initiation  -->
+    <!-- ART initiation obs for Patient 106 -->
+    <obs obs_id="30043" person_id="112" concept_id="1255" encounter_id="1112"
+        obs_datetime="2024-12-15 15:00:00" location_id="1" value_coded="1256"
+        creator="1" date_created="2024-12-15 15:00:00" voided="false"
+        uuid="obs-30043-uuid"/>
+<!-- ART initiation date during period -->
+    <obs obs_id="30121" person_id="112" concept_id="159599" encounter_id="1101" obs_datetime="2024-06-15 10:00:00.0" location_id="1" value_datetime="2024-06-15 00:00:00.0" creator="1" date_created="2024-06-15 10:00:00.0" voided="false" uuid="obs-30121f-uuid" />
+
+    <!-- Later encounter with lower CD4 -->
+    <encounter encounter_id="1113" encounter_type="10" patient_id="112" location_id="1" 
+              encounter_datetime="2024-08-01 14:00:00" creator="1" 
+              date_created="2024-08-01 14:00:00" voided="false" 
+              uuid="encounter-1113-uuid"/>
+
+    <!-- CD4 count = 180 (< 200) - LAST observation (should be used by TimeModifier.LAST) -->
+    <obs obs_id="2115" person_id="112" concept_id="5497" encounter_id="1113" 
+        obs_datetime="2024-08-01 14:00:00" location_id="1" value_numeric="180" 
+        creator="1" date_created="2024-08-01 14:00:00" voided="false" 
+        uuid="obs-2115-uuid"/>
+   
+
+</dataset>
