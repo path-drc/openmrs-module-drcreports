@@ -252,7 +252,7 @@
         obs_datetime="2024-06-01 10:00:00" location_id="1" value_numeric="180" 
         creator="1" date_created="2024-06-01 10:00:00" voided="false" 
         uuid="obs-2109-uuid"/>
-	<!-- Patient 108: HIV Program + ART Initiation BEFORE date range -->
+	<!-- Patient 108: HIV Program + NO ART Initiation  -->
 	<person person_id="108" gender="F" birthdate="1989-06-30 00:00:00" 
            birthdate_estimated="false" dead="false" creator="1" 
            date_created="2023-01-01 00:00:00" voided="false" 
@@ -264,7 +264,6 @@
                    location_id="1" outcome_concept_id="[NULL]" creator="1" 
                    date_created="2023-06-15 00:00:00" voided="false" 
                    uuid="pp-108-uuid"/>
-	<!-- ART initiation BEFORE the test period (2023) -->
 	<encounter encounter_id="1108" encounter_type="10" patient_id="108" location_id="1" 
               encounter_datetime="2023-07-15 10:00:00" creator="1" 
               date_created="2023-07-15 10:00:00" voided="false" 
@@ -319,13 +318,13 @@
         creator="1" date_created="2024-03-01 10:00:00" voided="false" 
         uuid="obs-2114-uuid"/>
 	<!-- ART initiation  -->
-	<!-- ART initiation obs for Patient 106 -->
+	<!-- ART initiation obs for Patient 112 -->
 	<obs obs_id="30043" person_id="112" concept_id="1255" encounter_id="1112"
         obs_datetime="2024-12-15 15:00:00" location_id="1" value_coded="1256"
         creator="1" date_created="2024-12-15 15:00:00" voided="false"
         uuid="obs-30043-uuid"/>
 	<!-- ART initiation date during period -->
-	<obs obs_id="30121" person_id="112" concept_id="159599" encounter_id="1101" obs_datetime="2024-06-15 10:00:00.0" location_id="1" value_datetime="2024-06-15 00:00:00.0" creator="1" date_created="2024-06-15 10:00:00.0" voided="false" uuid="obs-30121f-uuid" />
+	<obs obs_id="30121" person_id="112" concept_id="159599" encounter_id="1112" obs_datetime="2024-06-15 10:00:00.0" location_id="1" value_datetime="2024-06-15 00:00:00.0" creator="1" date_created="2024-06-15 10:00:00.0" voided="false" uuid="obs-30121f-uuid" />
 	<!-- Later encounter with lower CD4 -->
 	<encounter encounter_id="1113" encounter_type="10" patient_id="112" location_id="1" 
               encounter_datetime="2024-08-01 14:00:00" creator="1" 

@@ -169,21 +169,21 @@ public class DRCTxNewReportManagerTest extends BaseModuleContextSensitiveMysqlBa
 		
 		// 30–34 years
 		map.put("DRC TX_NEW Report.30-34 years (Males)", 2);
-		map.put("DRC TX_NEW Report.30-34 years (Females)", 0);
+		map.put("DRC TX_NEW Report.30-34 years (Females)", 1);
 		
 		// 35–39 years
-		map.put("DRC TX_NEW Report.35-39 years (Males)", 0);
-		map.put("DRC TX_NEW Report.35-39 years (Females)", 3);
+		map.put("DRC TX_NEW Report.35-39 years (Males)", 1);
+		map.put("DRC TX_NEW Report.35-39 years (Females)", 2);
 		
 		// 40–44 years
-		map.put("DRC TX_NEW Report.40-44 years (Males)", 1);
+		map.put("DRC TX_NEW Report.40-44 years (Males)", 0);
 		map.put("DRC TX_NEW Report.40-44 years (Females)", 1);
 		
 		// 45–49 years
 		map.put("DRC TX_NEW Report.45-49 years (Males)", 0);
 		map.put("DRC TX_NEW Report.45-49 years (Females)", 0);
 		
-		// 50–54 years
+		// 50-54 years
 		map.put("DRC TX_NEW Report.50-54 years (Males)", 0);
 		map.put("DRC TX_NEW Report.50-54 years (Females)", 0);
 		
@@ -234,11 +234,11 @@ public class DRCTxNewReportManagerTest extends BaseModuleContextSensitiveMysqlBa
 		map.put("CD4 < 200 cell/mm3.30-34 years (Females)", 0);
 		
 		// 35–39 years
-		map.put("CD4 < 200 cell/mm3.35-39 years (Males)", 0);
+		map.put("CD4 < 200 cell/mm3.35-39 years (Males)", 1);
 		map.put("CD4 < 200 cell/mm3.35-39 years (Females)", 1);
 		
 		// 40–44 years
-		map.put("CD4 < 200 cell/mm3.40-44 years (Males)", 1);
+		map.put("CD4 < 200 cell/mm3.40-44 years (Males)", 0);
 		map.put("CD4 < 200 cell/mm3.40-44 years (Females)", 0);
 		
 		// 45–49 years
@@ -293,11 +293,11 @@ public class DRCTxNewReportManagerTest extends BaseModuleContextSensitiveMysqlBa
 		
 		// 30–34 years
 		map.put("CD4 >= 200 cell/mm3.30-34 years (Males)", 0);
-		map.put("CD4 >= 200 cell/mm3.30-34 years (Females)", 0);
+		map.put("CD4 >= 200 cell/mm3.30-34 years (Females)", 1);
 		
 		// 35–39 years
 		map.put("CD4 >= 200 cell/mm3.35-39 years (Males)", 0);
-		map.put("CD4 >= 200 cell/mm3.35-39 years (Females)", 1);
+		map.put("CD4 >= 200 cell/mm3.35-39 years (Females)", 0);
 		
 		// 40–44 years
 		map.put("CD4 >= 200 cell/mm3.40-44 years (Males)", 0);
