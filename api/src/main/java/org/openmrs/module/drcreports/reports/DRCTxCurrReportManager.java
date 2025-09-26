@@ -176,6 +176,9 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		parameterMappings.put("onOrAfter", "${startDate}");
 		parameterMappings.put("onOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		// HIV Care Program cohort
 		ProgramEnrollmentCohortDefinition pecd = new ProgramEnrollmentCohortDefinition();
 		//ProgramWorkflowService ps = Context.getProgramWorkflowService();
@@ -277,9 +280,6 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		ccd.initializeFromElements(excludingInterruptedCD, alive, liveSqlCD, notStoppedARTSqlCD, notTransferredOutSqlCD,
 		    pecd);
 		
-		CompositionCohortDefinition interup = new CompositionCohortDefinition();
-		interup.initializeFromElements(interruptedSqlCD);
-		
 		CompositionCohortDefinition lessThanThreeMonthsccd = new CompositionCohortDefinition();
 		lessThanThreeMonthsccd.initializeFromElements(ccd, belowThreeMonthsDispensingSqlCD);
 		
@@ -303,8 +303,6 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		
 		CompositionCohortDefinition ccd5 = new CompositionCohortDefinition();
 		ccd5.initializeFromElements(resumeARTSqlCD, alive, liveSqlCD);
-		
-		txCurr.addRow("interup", interup, parameterMappings);
 		
 		txCurr.addRow(getName(), ccd, parameterMappings);
 		txCurr.addRow(MessageUtil.translate("drcreports.report.drc.lessThanThreeMonthsDrugsGiven.label"),
@@ -335,8 +333,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col1, createCohortComposition(under1y, males), null);
-		txCurr.addColumn(col2, createCohortComposition(under1y, females), null);
+		txCurr.addColumn(col1, createCohortComposition(under1y, males), ageParameterMappings);
+		txCurr.addColumn(col2, createCohortComposition(under1y, females), ageParameterMappings);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -345,8 +343,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col3, createCohortComposition(_1To4y, males), null);
-		txCurr.addColumn(col4, createCohortComposition(_1To4y, females), null);
+		txCurr.addColumn(col3, createCohortComposition(_1To4y, males), ageParameterMappings);
+		txCurr.addColumn(col4, createCohortComposition(_1To4y, females), ageParameterMappings);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -355,8 +353,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col5, createCohortComposition(_5To9y, males), null);
-		txCurr.addColumn(col6, createCohortComposition(_5To9y, females), null);
+		txCurr.addColumn(col5, createCohortComposition(_5To9y, males), ageParameterMappings);
+		txCurr.addColumn(col6, createCohortComposition(_5To9y, females), ageParameterMappings);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -365,8 +363,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col7, createCohortComposition(_10To14y, males), null);
-		txCurr.addColumn(col8, createCohortComposition(_10To14y, females), null);
+		txCurr.addColumn(col7, createCohortComposition(_10To14y, males), ageParameterMappings);
+		txCurr.addColumn(col8, createCohortComposition(_10To14y, females), ageParameterMappings);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -375,8 +373,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col9, createCohortComposition(_15To19y, males), null);
-		txCurr.addColumn(col10, createCohortComposition(_15To19y, females), null);
+		txCurr.addColumn(col9, createCohortComposition(_15To19y, males), ageParameterMappings);
+		txCurr.addColumn(col10, createCohortComposition(_15To19y, females), ageParameterMappings);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -385,18 +383,18 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col11, createCohortComposition(_20To24y, males), null);
-		txCurr.addColumn(col12, createCohortComposition(_20To24y, females), null);
+		txCurr.addColumn(col11, createCohortComposition(_20To24y, males), ageParameterMappings);
+		txCurr.addColumn(col12, createCohortComposition(_20To24y, females), ageParameterMappings);
 		
-		// 25-49 years
+		// 25-29 years
 		AgeCohortDefinition _25To29y = new AgeCohortDefinition();
 		_25To29y.setMinAge(25);
 		_25To29y.setMinAgeUnit(DurationUnit.YEARS);
 		_25To29y.setMaxAge(29);
 		_25To29y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To29y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col13, createCohortComposition(_25To29y, males), null);
-		txCurr.addColumn(col14, createCohortComposition(_25To29y, females), null);
+		txCurr.addColumn(col13, createCohortComposition(_25To29y, males), ageParameterMappings);
+		txCurr.addColumn(col14, createCohortComposition(_25To29y, females), ageParameterMappings);
 		
 		// 30-34 years
 		AgeCohortDefinition _30To34y = new AgeCohortDefinition();
@@ -405,8 +403,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_30To34y.setMaxAge(34);
 		_30To34y.setMaxAgeUnit(DurationUnit.YEARS);
 		_30To34y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col15, createCohortComposition(_30To34y, males), null);
-		txCurr.addColumn(col16, createCohortComposition(_30To34y, females), null);
+		txCurr.addColumn(col15, createCohortComposition(_30To34y, males), ageParameterMappings);
+		txCurr.addColumn(col16, createCohortComposition(_30To34y, females), ageParameterMappings);
 		
 		// 35-39 years
 		AgeCohortDefinition _35To39y = new AgeCohortDefinition();
@@ -415,8 +413,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_35To39y.setMaxAge(39);
 		_35To39y.setMaxAgeUnit(DurationUnit.YEARS);
 		_35To39y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col17, createCohortComposition(_35To39y, males), null);
-		txCurr.addColumn(col18, createCohortComposition(_35To39y, females), null);
+		txCurr.addColumn(col17, createCohortComposition(_35To39y, males), ageParameterMappings);
+		txCurr.addColumn(col18, createCohortComposition(_35To39y, females), ageParameterMappings);
 		
 		// 40-44 years
 		AgeCohortDefinition _40To44y = new AgeCohortDefinition();
@@ -425,8 +423,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_40To44y.setMaxAge(44);
 		_40To44y.setMaxAgeUnit(DurationUnit.YEARS);
 		_40To44y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col19, createCohortComposition(_40To44y, males), null);
-		txCurr.addColumn(col20, createCohortComposition(_40To44y, females), null);
+		txCurr.addColumn(col19, createCohortComposition(_40To44y, males), ageParameterMappings);
+		txCurr.addColumn(col20, createCohortComposition(_40To44y, females), ageParameterMappings);
 		
 		// 45-49 years
 		AgeCohortDefinition _45To49y = new AgeCohortDefinition();
@@ -435,8 +433,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_45To49y.setMaxAge(49);
 		_45To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_45To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col21, createCohortComposition(_45To49y, males), null);
-		txCurr.addColumn(col22, createCohortComposition(_45To49y, females), null);
+		txCurr.addColumn(col21, createCohortComposition(_45To49y, males), ageParameterMappings);
+		txCurr.addColumn(col22, createCohortComposition(_45To49y, females), ageParameterMappings);
 		
 		// 50-54 years
 		AgeCohortDefinition _50To54y = new AgeCohortDefinition();
@@ -445,8 +443,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_50To54y.setMaxAge(54);
 		_50To54y.setMaxAgeUnit(DurationUnit.YEARS);
 		_50To54y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col23, createCohortComposition(_50To54y, males), null);
-		txCurr.addColumn(col24, createCohortComposition(_50To54y, females), null);
+		txCurr.addColumn(col23, createCohortComposition(_50To54y, males), ageParameterMappings);
+		txCurr.addColumn(col24, createCohortComposition(_50To54y, females), ageParameterMappings);
 		
 		// 55-59 years
 		AgeCohortDefinition _55To59y = new AgeCohortDefinition();
@@ -455,8 +453,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_55To59y.setMaxAge(59);
 		_55To59y.setMaxAgeUnit(DurationUnit.YEARS);
 		_55To59y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col25, createCohortComposition(_55To59y, males), null);
-		txCurr.addColumn(col26, createCohortComposition(_55To59y, females), null);
+		txCurr.addColumn(col25, createCohortComposition(_55To59y, males), ageParameterMappings);
+		txCurr.addColumn(col26, createCohortComposition(_55To59y, females), ageParameterMappings);
 		
 		// 60-64 years
 		AgeCohortDefinition _60To64y = new AgeCohortDefinition();
@@ -465,8 +463,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_60To64y.setMaxAge(64);
 		_60To64y.setMaxAgeUnit(DurationUnit.YEARS);
 		_60To64y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col27, createCohortComposition(_60To64y, males), null);
-		txCurr.addColumn(col28, createCohortComposition(_60To64y, females), null);
+		txCurr.addColumn(col27, createCohortComposition(_60To64y, males), ageParameterMappings);
+		txCurr.addColumn(col28, createCohortComposition(_60To64y, females), ageParameterMappings);
 		
 		// 65+ years
 		AgeCohortDefinition _66To69y = new AgeCohortDefinition();
@@ -475,8 +473,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		_66To69y.setMaxAge(200);
 		_66To69y.setMaxAgeUnit(DurationUnit.YEARS);
 		_66To69y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col29, createCohortComposition(_66To69y, males), null);
-		txCurr.addColumn(col30, createCohortComposition(_66To69y, females), null);
+		txCurr.addColumn(col29, createCohortComposition(_66To69y, males), ageParameterMappings);
+		txCurr.addColumn(col30, createCohortComposition(_66To69y, females), ageParameterMappings);
 		
 		// <15 years
 		AgeCohortDefinition below15y = new AgeCohortDefinition();
@@ -485,8 +483,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		below15y.setMaxAge(14);
 		below15y.setMaxAgeUnit(DurationUnit.YEARS);
 		below15y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col31, createCohortComposition(below15y, males), null);
-		txCurr.addColumn(col32, createCohortComposition(below15y, females), null);
+		txCurr.addColumn(col31, createCohortComposition(below15y, males), ageParameterMappings);
+		txCurr.addColumn(col32, createCohortComposition(below15y, females), ageParameterMappings);
 		
 		// 15+ years
 		AgeCohortDefinition above15y = new AgeCohortDefinition();
@@ -495,8 +493,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		above15y.setMaxAge(200);
 		above15y.setMaxAgeUnit(DurationUnit.YEARS);
 		above15y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		txCurr.addColumn(col33, createCohortComposition(above15y, males), null);
-		txCurr.addColumn(col34, createCohortComposition(above15y, females), null);
+		txCurr.addColumn(col33, createCohortComposition(above15y, males), ageParameterMappings);
+		txCurr.addColumn(col34, createCohortComposition(above15y, females), ageParameterMappings);
 		
 		return rd;
 	}

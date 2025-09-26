@@ -113,6 +113,9 @@ public class DRCArtFirstLineFifteenYearsAndAboveReportManager extends ActivatedR
 		parameterMappings.put("onOrAfter", "${startDate}");
 		parameterMappings.put("onOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
 		// Visit in range
@@ -186,7 +189,7 @@ public class DRCArtFirstLineFifteenYearsAndAboveReportManager extends ActivatedR
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artFirstLineFifteenYearsAndAbove.addColumn(col8, createCohortComposition(_15To19y), null);
+		artFirstLineFifteenYearsAndAbove.addColumn(col8, createCohortComposition(_15To19y), ageParameterMappings);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -195,7 +198,7 @@ public class DRCArtFirstLineFifteenYearsAndAboveReportManager extends ActivatedR
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artFirstLineFifteenYearsAndAbove.addColumn(col9, createCohortComposition(_20To24y), null);
+		artFirstLineFifteenYearsAndAbove.addColumn(col9, createCohortComposition(_20To24y), ageParameterMappings);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -204,7 +207,7 @@ public class DRCArtFirstLineFifteenYearsAndAboveReportManager extends ActivatedR
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artFirstLineFifteenYearsAndAbove.addColumn(col10, createCohortComposition(_25To49y), null);
+		artFirstLineFifteenYearsAndAbove.addColumn(col10, createCohortComposition(_25To49y), ageParameterMappings);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -213,7 +216,7 @@ public class DRCArtFirstLineFifteenYearsAndAboveReportManager extends ActivatedR
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artFirstLineFifteenYearsAndAbove.addColumn(col11, createCohortComposition(_50andAbove), null);
+		artFirstLineFifteenYearsAndAbove.addColumn(col11, createCohortComposition(_50andAbove), ageParameterMappings);
 		
 		return rd;
 	}

@@ -118,6 +118,9 @@ public class DRCArtTransferInReportManager extends ActivatedReportManager {
 		parameterMappings.put("onOrAfter", "${startDate}");
 		parameterMappings.put("onOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
 		// Patient Type at Enrolment -> Transfer-In
@@ -159,7 +162,7 @@ public class DRCArtTransferInReportManager extends ActivatedReportManager {
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col4, createCohortComposition(under1y), null);
+		artTranferIn.addColumn(col4, createCohortComposition(under1y), ageParameterMappings);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -168,7 +171,7 @@ public class DRCArtTransferInReportManager extends ActivatedReportManager {
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col5, createCohortComposition(_1To4y), null);
+		artTranferIn.addColumn(col5, createCohortComposition(_1To4y), ageParameterMappings);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -177,7 +180,7 @@ public class DRCArtTransferInReportManager extends ActivatedReportManager {
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col6, createCohortComposition(_5To9y), null);
+		artTranferIn.addColumn(col6, createCohortComposition(_5To9y), ageParameterMappings);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -186,7 +189,7 @@ public class DRCArtTransferInReportManager extends ActivatedReportManager {
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col7, createCohortComposition(_10To14y), null);
+		artTranferIn.addColumn(col7, createCohortComposition(_10To14y), ageParameterMappings);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -195,7 +198,7 @@ public class DRCArtTransferInReportManager extends ActivatedReportManager {
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col8, createCohortComposition(_15To19y), null);
+		artTranferIn.addColumn(col8, createCohortComposition(_15To19y), ageParameterMappings);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -204,7 +207,7 @@ public class DRCArtTransferInReportManager extends ActivatedReportManager {
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col9, createCohortComposition(_20To24y), null);
+		artTranferIn.addColumn(col9, createCohortComposition(_20To24y), ageParameterMappings);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -213,7 +216,7 @@ public class DRCArtTransferInReportManager extends ActivatedReportManager {
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col10, createCohortComposition(_25To49y), null);
+		artTranferIn.addColumn(col10, createCohortComposition(_25To49y), ageParameterMappings);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -222,7 +225,7 @@ public class DRCArtTransferInReportManager extends ActivatedReportManager {
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artTranferIn.addColumn(col11, createCohortComposition(_50andAbove), null);
+		artTranferIn.addColumn(col11, createCohortComposition(_50andAbove), ageParameterMappings);
 		
 		return rd;
 	}

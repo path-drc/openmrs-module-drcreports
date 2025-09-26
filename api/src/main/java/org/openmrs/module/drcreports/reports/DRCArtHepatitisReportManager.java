@@ -114,6 +114,9 @@ public class DRCArtHepatitisReportManager extends ActivatedReportManager {
 		parameterMappings.put("startedOnOrAfter", "${startDate}");
 		parameterMappings.put("startedOnOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		// Current visit in date range
 		VisitCohortDefinition visits = new VisitCohortDefinition();
 		visits.setVisitTypeList(vs.getAllVisitTypes(false));
@@ -215,7 +218,7 @@ public class DRCArtHepatitisReportManager extends ActivatedReportManager {
 		_0To14y.setMaxAge(14);
 		_0To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_0To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artHepatitis.addColumn(col4, createCohortComposition(_0To14y), null);
+		artHepatitis.addColumn(col4, createCohortComposition(_0To14y), ageParameterMappings);
 		
 		// 15+ years
 		AgeCohortDefinition _15andAbove = new AgeCohortDefinition();
@@ -224,7 +227,7 @@ public class DRCArtHepatitisReportManager extends ActivatedReportManager {
 		_15andAbove.setMaxAge(200);
 		_15andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_15andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artHepatitis.addColumn(col5, createCohortComposition(_15andAbove), null);
+		artHepatitis.addColumn(col5, createCohortComposition(_15andAbove), ageParameterMappings);
 		
 		return rd;
 	}

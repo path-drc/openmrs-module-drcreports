@@ -114,6 +114,9 @@ public class DRCHivCaScreeningReportManager extends ActivatedReportManager {
 		parameterMappings.put("startedOnOrAfter", "${startDate}");
 		parameterMappings.put("startedOnOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		VisitCohortDefinition visits = new VisitCohortDefinition();
 		visits.setVisitTypeList(vs.getAllVisitTypes(false));
 		visits.addParameter(new Parameter("startedOnOrAfter", "On Or After", Date.class));
@@ -160,7 +163,7 @@ public class DRCHivCaScreeningReportManager extends ActivatedReportManager {
 		_30To49y.setMaxAge(49);
 		_30To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_30To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivCaScreening.addColumn(col1, createCohortComposition(females, _30To49y), null);
+		hivCaScreening.addColumn(col1, createCohortComposition(females, _30To49y), ageParameterMappings);
 		
 		return rd;
 	}
