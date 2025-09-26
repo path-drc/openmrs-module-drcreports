@@ -193,6 +193,7 @@ public class DRCTxNewReportManager extends ActivatedReportManager {
 		cd4CountLessThan200.setOperator1(RangeComparator.LESS_THAN);
 		cd4CountLessThan200.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		cd4CountLessThan200.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
+		cd4CountLessThan200.setTimeModifier(TimeModifier.LAST);
 		
 		CompositionCohortDefinition cd4Below200Ccd = new CompositionCohortDefinition();
 		cd4Below200Ccd.initializeFromElements(artInitiationSqlCD, pecd, cd4CountLessThan200);
@@ -204,6 +205,7 @@ public class DRCTxNewReportManager extends ActivatedReportManager {
 		cd4CountGreaterEqual200.setOperator1(RangeComparator.GREATER_EQUAL);
 		cd4CountGreaterEqual200.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		cd4CountGreaterEqual200.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
+		cd4CountGreaterEqual200.setTimeModifier(TimeModifier.LAST);
 		
 		CompositionCohortDefinition cd4GreaterEqual200Ccd = new CompositionCohortDefinition();
 		cd4GreaterEqual200Ccd.initializeFromElements(artInitiationSqlCD, pecd, cd4CountGreaterEqual200);

@@ -261,7 +261,7 @@ public class DRCTxNewReportManagerTest extends BaseModuleContextSensitiveMysqlBa
 		map.put("CD4 < 200 cell/mm3.65+ years (Males)", 0);
 		map.put("CD4 < 200 cell/mm3.65+ years (Females)", 0);
 		
-		map.put("CD4 >= 200 cell/mm3.Total", 3); //it z 2
+		map.put("CD4 >= 200 cell/mm3.Total", 2);
 		
 		// Below 1 year
 		map.put("CD4 >= 200 cell/mm3.Below 1 year (Males)", 0);
