@@ -112,6 +112,9 @@ public class DRCArtFirstLineBelowFifteenYearsReportManager extends ActivatedRepo
 		parameterMappings.put("onOrAfter", "${startDate}");
 		parameterMappings.put("onOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
 		// Visit in range
@@ -201,7 +204,7 @@ public class DRCArtFirstLineBelowFifteenYearsReportManager extends ActivatedRepo
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artFirstLineBelowFifteenYears.addColumn(col4, createCohortComposition(under1y), null);
+		artFirstLineBelowFifteenYears.addColumn(col4, createCohortComposition(under1y), ageParameterMappings);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -210,7 +213,7 @@ public class DRCArtFirstLineBelowFifteenYearsReportManager extends ActivatedRepo
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artFirstLineBelowFifteenYears.addColumn(col5, createCohortComposition(_1To4y), null);
+		artFirstLineBelowFifteenYears.addColumn(col5, createCohortComposition(_1To4y), ageParameterMappings);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -219,7 +222,7 @@ public class DRCArtFirstLineBelowFifteenYearsReportManager extends ActivatedRepo
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artFirstLineBelowFifteenYears.addColumn(col6, createCohortComposition(_5To9y), null);
+		artFirstLineBelowFifteenYears.addColumn(col6, createCohortComposition(_5To9y), ageParameterMappings);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -228,7 +231,7 @@ public class DRCArtFirstLineBelowFifteenYearsReportManager extends ActivatedRepo
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artFirstLineBelowFifteenYears.addColumn(col7, createCohortComposition(_10To14y), null);
+		artFirstLineBelowFifteenYears.addColumn(col7, createCohortComposition(_10To14y), ageParameterMappings);
 		
 		return rd;
 	}

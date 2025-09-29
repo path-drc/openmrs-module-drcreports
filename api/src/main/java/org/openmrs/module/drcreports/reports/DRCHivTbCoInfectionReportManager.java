@@ -139,6 +139,9 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		parameterMappings2.put("onOrAfter", "${startDate}");
 		parameterMappings2.put("onOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		VisitCohortDefinition visits = new VisitCohortDefinition();
 		visits.setVisitTypeList(vs.getAllVisitTypes(false));
 		visits.addParameter(new Parameter("startedOnOrAfter", "On Or After", Date.class));
@@ -315,7 +318,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col4, createCohortComposition(under1y), null);
+		hivTBCoInfection.addColumn(col4, createCohortComposition(under1y), ageParameterMappings);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -324,7 +327,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col5, createCohortComposition(_1To4y), null);
+		hivTBCoInfection.addColumn(col5, createCohortComposition(_1To4y), ageParameterMappings);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -333,7 +336,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col6, createCohortComposition(_5To9y), null);
+		hivTBCoInfection.addColumn(col6, createCohortComposition(_5To9y), ageParameterMappings);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -342,7 +345,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col7, createCohortComposition(_10To14y), null);
+		hivTBCoInfection.addColumn(col7, createCohortComposition(_10To14y), ageParameterMappings);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -351,7 +354,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col8, createCohortComposition(_15To19y), null);
+		hivTBCoInfection.addColumn(col8, createCohortComposition(_15To19y), ageParameterMappings);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -360,7 +363,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col9, createCohortComposition(_20To24y), null);
+		hivTBCoInfection.addColumn(col9, createCohortComposition(_20To24y), ageParameterMappings);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -369,7 +372,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col10, createCohortComposition(_25To49y), null);
+		hivTBCoInfection.addColumn(col10, createCohortComposition(_25To49y), ageParameterMappings);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -378,7 +381,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col11, createCohortComposition(_50andAbove), null);
+		hivTBCoInfection.addColumn(col11, createCohortComposition(_50andAbove), ageParameterMappings);
 		
 		return rd;
 	}
