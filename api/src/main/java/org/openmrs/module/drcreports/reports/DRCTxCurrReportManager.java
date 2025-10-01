@@ -221,6 +221,8 @@ public class DRCTxCurrReportManager extends ActivatedReportManager {
 		SqlCohortDefinition liveSqlCD = new SqlCohortDefinition();
 		String liveSql = getStringFromResource("org/openmrs/module/drcreports/sql/DRCLivePatients.sql");
 		liveSqlCD.setQuery(liveSql);
+		liveSqlCD.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		liveSqlCD.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		
 		// Not stopped ART in date range
 		SqlCohortDefinition notStoppedARTSqlCD = new SqlCohortDefinition();
