@@ -139,6 +139,9 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		parameterMappings2.put("onOrAfter", "${startDate}");
 		parameterMappings2.put("onOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		VisitCohortDefinition visits = new VisitCohortDefinition();
 		visits.setVisitTypeList(vs.getAllVisitTypes(false));
 		visits.addParameter(new Parameter("startedOnOrAfter", "On Or After", Date.class));
@@ -146,16 +149,13 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		
 		ConceptService cs = Context.getConceptService();
 		
-		// Newly Enrolled HIV Pt
-		CodedObsCohortDefinition newHIVEnrollment = new CodedObsCohortDefinition();
-		newHIVEnrollment.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
-		newHIVEnrollment.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
-		newHIVEnrollment.setOperator(SetComparator.IN);
-		newHIVEnrollment.setQuestion(cs.getConceptByUuid("83e40f2c-c316-43e6-a12e-20a338100281")); //What do you want to do?
-		newHIVEnrollment.setTimeModifier(TimeModifier.LAST);
-		List<Concept> newHIVEnrollmentAnswers = new ArrayList<Concept>();
-		newHIVEnrollmentAnswers.add(cs.getConceptByUuid("164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Enroll new Pt in HIV Care
-		newHIVEnrollment.setValueList(newHIVEnrollmentAnswers);
+		SqlCohortDefinition newlyIdentifiedPtLivingWithHIVsqd = new SqlCohortDefinition();
+		//What do you want to do? ---> Enroll new Pt in HIV Care & date of enrollment is <=30 days 
+		String newlyIdentifiedPtLivingWithHIVsql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id "
+		        + "JOIN concept c_answer ON o.value_coded = c_answer.concept_id JOIN obs o2 ON o.person_id = o2.person_id AND o.obs_datetime = o2.obs_datetime WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid = '164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o2.concept_id = (SELECT concept_id FROM concept WHERE uuid = '160555AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') AND o2.value_datetime <= :onOrAfter AND o.voided = 0 AND o2.voided = 0);";
+		newlyIdentifiedPtLivingWithHIVsqd.setQuery(newlyIdentifiedPtLivingWithHIVsql);
+		newlyIdentifiedPtLivingWithHIVsqd.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		
 		//TB Screening
 		CodedObsCohortDefinition tBScreening = new CodedObsCohortDefinition();
@@ -173,13 +173,13 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		livePatients.setDied(false);
 		
 		CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-		ccd.initializeFromElements(visits, newHIVEnrollment, tBScreening, livePatients);
+		ccd.initializeFromElements(visits, newlyIdentifiedPtLivingWithHIVsqd, tBScreening, livePatients);
 		// Presumptive TB signs
 		CodedObsCohortDefinition presumptiveTBSigns = new CodedObsCohortDefinition();
 		presumptiveTBSigns.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		presumptiveTBSigns.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		presumptiveTBSigns.setOperator(SetComparator.IN);
-		presumptiveTBSigns.setQuestion(cs.getConceptByUuid("12a22a0b-f0ed-4f1a-8d70-7c6acda5ae78")); //What do you want to do?
+		presumptiveTBSigns.setQuestion(cs.getConceptByUuid("12a22a0b-f0ed-4f1a-8d70-7c6acda5ae78")); //TB Signs/Symptoms
 		presumptiveTBSigns.setTimeModifier(TimeModifier.LAST);
 		List<Concept> presumptiveTBSignsAnswers = new ArrayList<Concept>();
 		
@@ -191,14 +191,13 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		presumptiveTBSigns.setValueList(presumptiveTBSignsAnswers);
 		
 		CompositionCohortDefinition ccd2 = new CompositionCohortDefinition();
-		ccd2.initializeFromElements(visits, presumptiveTBSigns, livePatients);
+		ccd2.initializeFromElements(visits, newlyIdentifiedPtLivingWithHIVsqd, presumptiveTBSigns, livePatients);
 		
 		SqlCohortDefinition ptLivingWithHIVsqd = new SqlCohortDefinition();
-		
-		//What do you want to do? ---> Enroll new Pt in HIV Care
-		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid = '164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0);";
-		ptLivingWithHIVsqd.setQuery(sql);
+		//What do you want to do? ---> Enrol a new client, Transfer in a client, Enrol a Mother into PMTCT program, Re-enrol a client
+		String ptLivingWithHIVsql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid IN ('164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','160563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','163532AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','159833AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') AND o.voided = 0);";
+		ptLivingWithHIVsqd.setQuery(ptLivingWithHIVsql);
 		
 		//Action taken - Presumptive TB ----> GeneXpert MTB/Rif Ordered
 		CodedObsCohortDefinition tBTestDoneGeneExpert = new CodedObsCohortDefinition();
@@ -252,6 +251,17 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		evalTBProphylaxisAnswer.add(cs.getConceptByUuid("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Yes
 		evalTBProphylaxis.setValueList(evalTBProphylaxisAnswer);
 		
+		//Negative TB Screening
+		CodedObsCohortDefinition negativeTBScreening = new CodedObsCohortDefinition();
+		negativeTBScreening.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
+		negativeTBScreening.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
+		negativeTBScreening.setOperator(SetComparator.IN);
+		negativeTBScreening.setQuestion(cs.getConceptByUuid("160108AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); //TB screening outcome
+		negativeTBScreening.setTimeModifier(TimeModifier.LAST);
+		List<Concept> negativeTBScreeningAnswer = new ArrayList<Concept>();
+		negativeTBScreeningAnswer.add(cs.getConceptByUuid("664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); //Negative
+		negativeTBScreening.setValueList(negativeTBScreeningAnswer);
+		
 		//Date tuberculosis prophylaxis started
 		DateObsCohortDefinition tbProphylaxisDate = new DateObsCohortDefinition();
 		tbProphylaxisDate.setTimeModifier(TimeModifier.LAST);
@@ -259,7 +269,8 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		tbProphylaxisDate.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
 		tbProphylaxisDate.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
 		CompositionCohortDefinition ccd6 = new CompositionCohortDefinition();
-		ccd6.initializeFromElements(newHIVEnrollment, evalTBProphylaxis, tbProphylaxisDate, livePatients);
+		ccd6.initializeFromElements(newlyIdentifiedPtLivingWithHIVsqd, evalTBProphylaxis, negativeTBScreening,
+		    tbProphylaxisDate, livePatients);
 		
 		//Completed TB Prophylaxis
 		CodedObsCohortDefinition completedTBProphylaxis = new CodedObsCohortDefinition();
@@ -307,7 +318,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col4, createCohortComposition(under1y), null);
+		hivTBCoInfection.addColumn(col4, createCohortComposition(under1y), ageParameterMappings);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -316,7 +327,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col5, createCohortComposition(_1To4y), null);
+		hivTBCoInfection.addColumn(col5, createCohortComposition(_1To4y), ageParameterMappings);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -325,7 +336,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col6, createCohortComposition(_5To9y), null);
+		hivTBCoInfection.addColumn(col6, createCohortComposition(_5To9y), ageParameterMappings);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -334,7 +345,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col7, createCohortComposition(_10To14y), null);
+		hivTBCoInfection.addColumn(col7, createCohortComposition(_10To14y), ageParameterMappings);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -343,7 +354,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col8, createCohortComposition(_15To19y), null);
+		hivTBCoInfection.addColumn(col8, createCohortComposition(_15To19y), ageParameterMappings);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -352,7 +363,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col9, createCohortComposition(_20To24y), null);
+		hivTBCoInfection.addColumn(col9, createCohortComposition(_20To24y), ageParameterMappings);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -361,7 +372,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col10, createCohortComposition(_25To49y), null);
+		hivTBCoInfection.addColumn(col10, createCohortComposition(_25To49y), ageParameterMappings);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -370,7 +381,7 @@ public class DRCHivTbCoInfectionReportManager extends ActivatedReportManager {
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivTBCoInfection.addColumn(col11, createCohortComposition(_50andAbove), null);
+		hivTBCoInfection.addColumn(col11, createCohortComposition(_50andAbove), ageParameterMappings);
 		
 		return rd;
 	}

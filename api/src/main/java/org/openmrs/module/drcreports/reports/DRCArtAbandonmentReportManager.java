@@ -25,10 +25,10 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Component
 public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
@@ -64,8 +64,8 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 	
 	private Parameter getReportingDateParameter() {
 		String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		return new Parameter("onOrBefore", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class,
-		        null, DateUtil.parseDate(today, "yyyy-MM-dd"));
+		return new Parameter("endDate", MessageUtil.translate("drcreports.report.util.reportingEndDate"), Date.class, null,
+		        DateUtil.parseDate(today, "yyyy-MM-dd"));
 	}
 	
 	public static String col1 = "";
@@ -112,7 +112,10 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(artAbandonment));
 		
 		Map<String, Object> parameterMappings = new HashMap<String, Object>();
-		parameterMappings.put("onOrBefore", "${onOrBefore}");
+		parameterMappings.put("onOrBefore", "${endDate}");
+		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
 		
 		SqlCohortDefinition sqd = new SqlCohortDefinition();
 		
@@ -159,7 +162,7 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artAbandonment.addColumn(col4, createCohortComposition(under1y), null);
+		artAbandonment.addColumn(col4, createCohortComposition(under1y), ageParameterMappings);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -168,7 +171,7 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artAbandonment.addColumn(col5, createCohortComposition(_1To4y), null);
+		artAbandonment.addColumn(col5, createCohortComposition(_1To4y), ageParameterMappings);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -177,7 +180,7 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artAbandonment.addColumn(col6, createCohortComposition(_5To9y), null);
+		artAbandonment.addColumn(col6, createCohortComposition(_5To9y), ageParameterMappings);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -186,7 +189,7 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artAbandonment.addColumn(col7, createCohortComposition(_10To14y), null);
+		artAbandonment.addColumn(col7, createCohortComposition(_10To14y), ageParameterMappings);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -195,7 +198,7 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artAbandonment.addColumn(col8, createCohortComposition(_15To19y), null);
+		artAbandonment.addColumn(col8, createCohortComposition(_15To19y), ageParameterMappings);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -204,7 +207,7 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artAbandonment.addColumn(col9, createCohortComposition(_20To24y), null);
+		artAbandonment.addColumn(col9, createCohortComposition(_20To24y), ageParameterMappings);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -213,7 +216,7 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artAbandonment.addColumn(col10, createCohortComposition(_25To49y), null);
+		artAbandonment.addColumn(col10, createCohortComposition(_25To49y), ageParameterMappings);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -222,24 +225,24 @@ public class DRCArtAbandonmentReportManager extends ActivatedReportManager {
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		artAbandonment.addColumn(col11, createCohortComposition(_50andAbove), null);
+		artAbandonment.addColumn(col11, createCohortComposition(_50andAbove), ageParameterMappings);
 		
 		return rd;
 	}
 	
 	private void setColumnNames() {
 		
-		col1 = MessageUtil.translate("drcreports.report.drc.hivStage.males.label");
-		col2 = MessageUtil.translate("drcreports.report.drc.hivStage.females.label");
-		col3 = MessageUtil.translate("drcreports.report.drc.hivStage.allGenders.label");
-		col4 = MessageUtil.translate("drcreports.report.drc.hivStage.belowOneYr.label");
-		col5 = MessageUtil.translate("drcreports.report.drc.hivStage.oneToFourYrs.label");
-		col6 = MessageUtil.translate("drcreports.report.drc.hivStage.fiveToNineYrs.label");
-		col7 = MessageUtil.translate("drcreports.report.drc.hivStage.tenToFourteenYrs.label");
-		col8 = MessageUtil.translate("drcreports.report.drc.hivStage.fifteenToNineteenYrs.label");
-		col9 = MessageUtil.translate("drcreports.report.drc.hivStage.twentyToTwentyFourYrs.label");
-		col10 = MessageUtil.translate("drcreports.report.drc.hivStage.twentyFiveToFourtyNineYrs.label");
-		col11 = MessageUtil.translate("drcreports.report.drc.hivStage.fiftyAndAbove.label");
+		col1 = MessageUtil.translate("drcreports.report.drc.males.label");
+		col2 = MessageUtil.translate("drcreports.report.drc.females.label");
+		col3 = MessageUtil.translate("drcreports.report.drc.allGenders.label");
+		col4 = MessageUtil.translate("drcreports.report.drc.belowOneYr.label");
+		col5 = MessageUtil.translate("drcreports.report.drc.oneToFourYrs.label");
+		col6 = MessageUtil.translate("drcreports.report.drc.fiveToNineYrs.label");
+		col7 = MessageUtil.translate("drcreports.report.drc.tenToFourteenYrs.label");
+		col8 = MessageUtil.translate("drcreports.report.drc.fifteenToNineteenYrs.label");
+		col9 = MessageUtil.translate("drcreports.report.drc.twentyToTwentyFourYrs.label");
+		col10 = MessageUtil.translate("drcreports.report.drc.twentyFiveToFourtyNineYrs.label");
+		col11 = MessageUtil.translate("drcreports.report.drc.fiftyAndAbove.label");
 		
 	}
 	

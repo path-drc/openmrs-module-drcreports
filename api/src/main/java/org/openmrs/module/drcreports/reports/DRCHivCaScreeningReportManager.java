@@ -114,6 +114,9 @@ public class DRCHivCaScreeningReportManager extends ActivatedReportManager {
 		parameterMappings.put("startedOnOrAfter", "${startDate}");
 		parameterMappings.put("startedOnOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		VisitCohortDefinition visits = new VisitCohortDefinition();
 		visits.setVisitTypeList(vs.getAllVisitTypes(false));
 		visits.addParameter(new Parameter("startedOnOrAfter", "On Or After", Date.class));
@@ -134,10 +137,10 @@ public class DRCHivCaScreeningReportManager extends ActivatedReportManager {
 		
 		SqlCohortDefinition ptLivingWithHIVsqd = new SqlCohortDefinition();
 		
-		//Patient Type at Enrolment ---> Enroll new Pt in HIV Care
-		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid = '164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0);";
-		ptLivingWithHIVsqd.setQuery(sql);
+		//What do you want to do? ---> Enrol a new client, Transfer in a client, Enrol a Mother into PMTCT program, Re-enrol a client
+		String ptLivingWithHIVsql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid IN ('164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','160563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','163532AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','159833AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') AND o.voided = 0);";
+		ptLivingWithHIVsqd.setQuery(ptLivingWithHIVsql);
 		
 		// Alive patients
 		BirthAndDeathCohortDefinition livePatients = new BirthAndDeathCohortDefinition();
@@ -160,7 +163,7 @@ public class DRCHivCaScreeningReportManager extends ActivatedReportManager {
 		_30To49y.setMaxAge(49);
 		_30To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_30To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		hivCaScreening.addColumn(col1, createCohortComposition(females, _30To49y), null);
+		hivCaScreening.addColumn(col1, createCohortComposition(females, _30To49y), ageParameterMappings);
 		
 		return rd;
 	}

@@ -138,6 +138,9 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		parameterMappings.put("startedOnOrAfter", "${startDate}");
 		parameterMappings.put("startedOnOrBefore", "${endDate}");
 		
+		Map<String, Object> ageParameterMappings = new HashMap<String, Object>();
+		ageParameterMappings.put("effectiveDate", "${endDate}");
+		
 		// Current visit in date range
 		VisitCohortDefinition visits = new VisitCohortDefinition();
 		visits.setVisitTypeList(vs.getAllVisitTypes(false));
@@ -145,10 +148,10 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		visits.addParameter(new Parameter("startedOnOrBefore", "On Or Before", Date.class));
 		
 		SqlCohortDefinition ptLivingWithHIVsqd = new SqlCohortDefinition();
-		//What do you want to do? ---> Enroll new Pt in HIV Care
-		String sql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
-		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid = '164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' AND o.voided = 0);";
-		ptLivingWithHIVsqd.setQuery(sql);
+		//What do you want to do? ---> Enrol a new client, Transfer in a client, Enrol a Mother into PMTCT program, Re-enrol a client
+		String ptLivingWithHIVsql = "SELECT DISTINCT p.patient_id FROM patient p WHERE p.voided = 0 "
+		        + "AND EXISTS (SELECT 1 FROM obs o JOIN concept c_question ON o.concept_id = c_question.concept_id JOIN concept c_answer ON o.value_coded = c_answer.concept_id WHERE o.person_id = p.patient_id AND c_question.uuid = '83e40f2c-c316-43e6-a12e-20a338100281' AND c_answer.uuid IN ('164144AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','160563AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','163532AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA','159833AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') AND o.voided = 0);";
+		ptLivingWithHIVsqd.setQuery(ptLivingWithHIVsql);
 		
 		SqlCohortDefinition ptWithCd4OrdersSqd = new SqlCohortDefinition();
 		// CD4 count Order in date range
@@ -391,7 +394,7 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		under1y.setMaxAge(11);
 		under1y.setMaxAgeUnit(DurationUnit.MONTHS);
 		under1y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		biologicalMonitoring.addColumn(col4, createCohortComposition(under1y), null);
+		biologicalMonitoring.addColumn(col4, createCohortComposition(under1y), ageParameterMappings);
 		
 		// 1-4 years
 		AgeCohortDefinition _1To4y = new AgeCohortDefinition();
@@ -400,7 +403,7 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		_1To4y.setMaxAge(4);
 		_1To4y.setMaxAgeUnit(DurationUnit.YEARS);
 		_1To4y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		biologicalMonitoring.addColumn(col5, createCohortComposition(_1To4y), null);
+		biologicalMonitoring.addColumn(col5, createCohortComposition(_1To4y), ageParameterMappings);
 		
 		// 5-9 years
 		AgeCohortDefinition _5To9y = new AgeCohortDefinition();
@@ -409,7 +412,7 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		_5To9y.setMaxAge(9);
 		_5To9y.setMaxAgeUnit(DurationUnit.YEARS);
 		_5To9y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		biologicalMonitoring.addColumn(col6, createCohortComposition(_5To9y), null);
+		biologicalMonitoring.addColumn(col6, createCohortComposition(_5To9y), ageParameterMappings);
 		
 		// 10-14 years
 		AgeCohortDefinition _10To14y = new AgeCohortDefinition();
@@ -418,7 +421,7 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		_10To14y.setMaxAge(14);
 		_10To14y.setMaxAgeUnit(DurationUnit.YEARS);
 		_10To14y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		biologicalMonitoring.addColumn(col7, createCohortComposition(_10To14y), null);
+		biologicalMonitoring.addColumn(col7, createCohortComposition(_10To14y), ageParameterMappings);
 		
 		// 15-19 years
 		AgeCohortDefinition _15To19y = new AgeCohortDefinition();
@@ -427,7 +430,7 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		_15To19y.setMaxAge(19);
 		_15To19y.setMaxAgeUnit(DurationUnit.YEARS);
 		_15To19y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		biologicalMonitoring.addColumn(col8, createCohortComposition(_15To19y), null);
+		biologicalMonitoring.addColumn(col8, createCohortComposition(_15To19y), ageParameterMappings);
 		
 		// 20-24 years
 		AgeCohortDefinition _20To24y = new AgeCohortDefinition();
@@ -436,7 +439,7 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		_20To24y.setMaxAge(24);
 		_20To24y.setMaxAgeUnit(DurationUnit.YEARS);
 		_20To24y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		biologicalMonitoring.addColumn(col9, createCohortComposition(_20To24y), null);
+		biologicalMonitoring.addColumn(col9, createCohortComposition(_20To24y), ageParameterMappings);
 		
 		// 25-49 years
 		AgeCohortDefinition _25To49y = new AgeCohortDefinition();
@@ -445,7 +448,7 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		_25To49y.setMaxAge(49);
 		_25To49y.setMaxAgeUnit(DurationUnit.YEARS);
 		_25To49y.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		biologicalMonitoring.addColumn(col10, createCohortComposition(_25To49y), null);
+		biologicalMonitoring.addColumn(col10, createCohortComposition(_25To49y), ageParameterMappings);
 		
 		// 50+ years
 		AgeCohortDefinition _50andAbove = new AgeCohortDefinition();
@@ -454,7 +457,7 @@ public class DRCBiologicalMonitoringReportManager extends ActivatedReportManager
 		_50andAbove.setMaxAge(200);
 		_50andAbove.setMaxAgeUnit(DurationUnit.YEARS);
 		_50andAbove.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-		biologicalMonitoring.addColumn(col11, createCohortComposition(_50andAbove), null);
+		biologicalMonitoring.addColumn(col11, createCohortComposition(_50andAbove), ageParameterMappings);
 		
 		return rd;
 	}
