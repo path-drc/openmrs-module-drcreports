@@ -129,7 +129,7 @@ public class DRCHivCaScreeningReportManager extends ActivatedReportManager {
 		caScreening.addParameter(new Parameter("onOrAfter", "On Or After", Date.class));
 		caScreening.addParameter(new Parameter("onOrBefore", "On Or Before", Date.class));
 		caScreening.setOperator(SetComparator.IN);
-		caScreening.setQuestion(cs.getConceptByUuid("e5e99fc7-ff2d-4306-aefd-b87a07fc9ab4")); // Screened for cervical cancer during this visit
+		caScreening.setQuestion(cs.getConceptByUuid("e5e99fc7-ff2d-4306-aefd-b87a07fc9ab4")); // Cervical cancer screening status
 		caScreening.setTimeModifier(TimeModifier.LAST);
 		List<Concept> caScreeningAnswers = new ArrayList<Concept>();
 		caScreeningAnswers.add(cs.getConceptByUuid("165619AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")); // Cervical cancer screening performed

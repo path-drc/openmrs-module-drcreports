@@ -49,7 +49,7 @@ public class DRCArtDeathReportManagerTest extends BaseModuleContextSensitiveTest
 	@Before
 	public void setup() throws Exception {
 		executeDataSet("org/openmrs/module/reporting/include/ReportTestDataset-openmrs-2.0.xml");
-		executeDataSet("org/openmrs/module/drcreports/include/DRCARTDeathReportTestDataset.xml");
+		executeDataSet("org/openmrs/module/drcreports/include/DRCArtDeathReportTestDataset.xml");
 		
 		String path = getClass().getClassLoader().getResource("testAppDataDir").getPath() + File.separator;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", path);
@@ -62,7 +62,7 @@ public class DRCArtDeathReportManagerTest extends BaseModuleContextSensitiveTest
 	}
 	
 	@Test
-	public void setupReport_shouldSetupDRCARTTransferOutReport() {
+	public void setupReport_shouldSetupDRCArtDeathReportReport() {
 		
 		// replay
 		ReportManagerUtil.setupReport(manager);

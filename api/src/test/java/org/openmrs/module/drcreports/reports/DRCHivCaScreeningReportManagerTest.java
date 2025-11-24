@@ -27,7 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class DRCArtTransferInReportManagerTest extends BaseModuleContextSensitiveTest {
+public class DRCHivCaScreeningReportManagerTest extends BaseModuleContextSensitiveTest {
 	
 	@Autowired
 	private InitializerService iniz;
@@ -43,12 +43,12 @@ public class DRCArtTransferInReportManagerTest extends BaseModuleContextSensitiv
 	private ConceptService cs;
 	
 	@Autowired
-	private DRCArtTransferInReportManager manager;
+	private DRCHivCaScreeningReportManager manager;
 	
 	@Before
 	public void setup() throws Exception {
 		executeDataSet("org/openmrs/module/reporting/include/ReportTestDataset-openmrs-2.0.xml");
-		executeDataSet("org/openmrs/module/drcreports/include/DRCArtTranferInReportTestDataset.xml");
+		executeDataSet("org/openmrs/module/drcreports/include/DRCHivCaScreeningReportTestDataset.xml");
 		
 		String path = getClass().getClassLoader().getResource("testAppDataDir").getPath() + File.separator;
 		System.setProperty("OPENMRS_APPLICATION_DATA_DIRECTORY", path);
@@ -61,14 +61,13 @@ public class DRCArtTransferInReportManagerTest extends BaseModuleContextSensitiv
 	}
 	
 	@Test
-	public void setupReport_shouldSetupDRCArtTransferInReport() {
+	public void setupReport_shouldSetupDRCHivCaScreeningReport() {
 		
 		// replay
 		ReportManagerUtil.setupReport(manager);
 		
 		// verify
-		assertThat(rs.getReportDesignByUuid("b95b1b84-91a8-4c1c-901f-fc84b1ad168f"), is(notNullValue()));
-		
+		assertThat(rs.getReportDesignByUuid("8fd7b2bb-94b4-4e69-8839-95cb4de1b4c2"), is(notNullValue()));
 	}
 	
 	@Test
@@ -92,17 +91,7 @@ public class DRCArtTransferInReportManagerTest extends BaseModuleContextSensitiv
 	
 	private Map<String, Integer> getColumnValues() {
 		Map<String, Integer> map = new HashMap<String, Integer>();
-		map.put("DRC ART Transfer In Report.Females", 1);
-		map.put("DRC ART Transfer In Report.Males", 0);
-		map.put("DRC ART Transfer In Report.All", 1);
-		map.put("DRC ART Transfer In Report.Below 1 year", 0);
-		map.put("DRC ART Transfer In Report.1-4 years", 0);
-		map.put("DRC ART Transfer In Report.5-9 years", 0);
-		map.put("DRC ART Transfer In Report.10-14 years", 0);
-		map.put("DRC ART Transfer In Report.15-19 years", 0);
-		map.put("DRC ART Transfer In Report.20-24 years", 0);
-		map.put("DRC ART Transfer In Report.25-49 years", 1);
-		map.put("DRC ART Transfer In Report.50+ years", 0);
+		map.put("DRC HIV+ women who received cervical cancer screening.30-49 years", 1);
 		
 		return map;
 		
